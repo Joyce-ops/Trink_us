@@ -1,9 +1,9 @@
 # Trink_us
 Entdecke die Welt der Cocktails mit unserer App!
 
-🍹 Rezepte: Finde eine Vielzahl von Cocktail-Rezepten, von Klassikern bis hin zu exotischen Kreationen. Egal ob du ein Anfänger oder ein erfahrener Barkeeper bist, unsere Sammlung hat für jeden Geschmack etwas dabei.
+🍹 Rezepte: Finde eine Vielzahl von Cocktail-Rezepten, von Klassikern bis hin zu exotischen Kreationen. Egal ob du ein Anfänger:in, ein erfahrener Barkeeper:in oder minderjährig bist, unsere Sammlung hat für jeden Geschmack etwas dabei.
 
-⭐ Favoriten: Speichere deine Lieblingsrezepte und habe sie immer griffbereit. So kannst du deine persönlichen Highlights schnell wiederfinden und genießen.
+⭐ Favoriten: Speichere deine Lieblingsrezepte und habe sie immer griffbereit. So kannst du deine persönlichen Highlights schnell wiederfinden und geniessen.
 
 📊 Trinktracker: Behalte den Überblick über deinen Konsum. Mit unserem praktischen Tracker kannst du genau festhalten, wie viel du getrunken hast und deine Trinkgewohnheiten im Auge behalten.
 
