@@ -11,6 +11,6 @@ Lade jetzt die App herunter und tauche ein in die faszinierende Welt der Cocktai
 Link to the app:
 
 Diese App wurde im Rahmen des Studiengangs BMLD im Modul Informatik 2 von folgenden Personen entwickelt: 
-Carmen Hurschler - hurssca1@gstudents.zhaw.ch
-Joyce Baumann - baumajoy@students.zhaw.ch
-Mcqulat Miller - millemcq@students.zhaw.ch
+- Carmen Hurschler - hurssca1@gstudents.zhaw.ch
+- Joyce Baumann - baumajoy@students.zhaw.ch
+- Mcqulat Miller - millemcq@students.zhaw.ch
