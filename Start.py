@@ -25,7 +25,7 @@ data_manager.load_user_data(
 # Here starts the actual app, which was developed previously
 import streamlit as st
 
-st.title('BMI Rechner')
+st.title('Cocktail Rezepte')
 
 name = st.session_state.get('name')
 st.markdown(f"✨ Hallo {name}! ✨")
