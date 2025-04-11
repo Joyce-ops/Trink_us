@@ -26,7 +26,12 @@
 - **Iterative Optimierung:** Nutzen wir das Feedback und die Testergebnisse, um die Funktionen zu verbessern und die Benutzererfahrung weiterzuentwickeln.
 
 **Test Raster**
-- Was war gut?
-- Was war schlecht?
-- Neue Ideen?
-- Neue Probleme?
+*Was war gut?*
+Die Screenauswahl sowie die Menuleiste hat der Person gefallen. Dass man mit einem Button direkt auf den nächsten Screen kommt, wirkte für sie sehr übersichtlich und umgänglich.
+*Was war schlecht?*
+Die befragte Person hat keine schlechten Anmerkungen gemacht.
+*Neue Ideen?*
+Wenn man noch nicht 18 Jahre alt ist, sollte direkt die Cocktail Option verschwinden und nur noch Mocktails sollten angezeigt werden.
+Eine weitere Idee von der Person war, dass es eine Option für das Speichern von Eigenkreationen gibt. 
+*Neue Probleme?*
+Nach dem Nutzertest haben sich keine neuen Probleme ergeben. 
