@@ -21,8 +21,6 @@
 ## Version 1.0 – Grundfunktionen
 1. **Cocktail-Rezept anzeigen**
    - Finde eine Vielzahl von Cocktail-Rezepten, von Klassikern bis hin zu exotischen Kreationen sowie alkoholfreie Cocktails.
-2. **Cocktail-Rezepte durchsuchen**
-   - Nutzer können gezielt nach bestimmten Rezepten suchen.
 
 ## Version 2.0 – Erweiterte Informationen
 1. **Favoriten speichern**
