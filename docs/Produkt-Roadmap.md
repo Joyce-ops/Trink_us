@@ -20,17 +20,13 @@
 
 ## Version 1.0 – Grundfunktionen
 1. **Cocktail-Rezept anzeigen**
-   - Finde eine Vielzahl von Cocktail-Rezepten, von Klassikern bis hin zu exotischen Kreationen sowie alkoholfreie Cocktails.
+   - Finde fünf Cocktail-Rezepte sowie passende Bilder dazu. Diese werden angezeigt auf der Webseite.
 
 ## Version 2.0 – Erweiterte Informationen
-1. **Favoriten speichern**
-   - Nutzer können ihre Lieblingsrezepte speichern und schnell wiederfinden.
-2. **Zusatzinformationen anzeigen**
-   - Hinweise zu alkoholfreien Alternativen.
-   - Rezeptmenge auf Personenanzahl anpassen.
+1. **Login hinzufügen**
+   - Nutzer können sich einloggen und Rezepte abrufen.
 
 ## Version 3.0 – Konsumverfolgung
 1. **Trinktracker**
-   - Nutzer können ihren Konsum verfolgen und ihre Trinkgewohnheiten im Auge behalten.
-2. **Statistiken und Analysen**
-   - Detaillierte Auswertungen über den Konsum.
+   - Nutzer können ihren Konsum verfolgen und ihre Trinkgewohnheiten im Auge behalten. Ausserdem können die Nutzer ihre Favoriten speichern und auf einer separaten Seite anschauen.
+
