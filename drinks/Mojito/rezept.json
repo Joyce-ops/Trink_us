@@ -1,0 +1,40 @@
+{
+    "name": "Mojito",
+    "ingredients": [
+        {
+            "name": "Weißer Rum",
+            "amount": "50ml"
+        },
+        {
+            "name": "Limettensaft",
+            "amount": "25ml"
+        },
+        {
+            "name": "Zucker",
+            "amount": "2 TL"
+        },
+        {
+            "name": "Minzblätter",
+            "amount": "10-12"
+        },
+        {
+            "name": "Sodawasser",
+            "amount": "nach Geschmack"
+        },
+        {
+            "name": "Eiswürfel",
+            "amount": "nach Bedarf"
+        }
+    ],
+    "instructions": [
+        "Die Minzblätter und den Zucker in ein Glas geben und leicht zerdrücken, um die Aromen freizusetzen.",
+        "Den Limettensaft und den weißen Rum hinzufügen.",
+        "Das Glas mit Eiswürfeln füllen.",
+        "Mit Sodawasser auffüllen und vorsichtig umrühren.",
+        "Mit einem Minzzweig und einer Limettenscheibe garnieren."
+    ],
+    "glass": "Highball-Glas",
+    "garnish": "Minzzweig, Limettenscheibe",
+    "category": "Cocktail",
+    "alcoholic": true
+}

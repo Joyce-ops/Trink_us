@@ -1,0 +1,30 @@
+{
+    "cocktail": "Manhattan",
+    "ingredients": [
+        {
+            "name": "Rye Whiskey",
+            "amount": "60ml"
+        },
+        {
+            "name": "Sweet Vermouth",
+            "amount": "30ml"
+        },
+        {
+            "name": "Angostura Bitters",
+            "amount": "2 dashes"
+        },
+        {
+            "name": "Cherry",
+            "amount": "1 (for garnish)"
+        }
+    ],
+    "instructions": [
+        "Fill a mixing glass with ice.",
+        "Add Rye Whiskey, Sweet Vermouth, and Angostura Bitters.",
+        "Stir well until chilled.",
+        "Strain into a chilled cocktail glass.",
+        "Garnish with a cherry."
+    ],
+    "glass": "Cocktail Glass",
+    "category": "Classic"
+}
