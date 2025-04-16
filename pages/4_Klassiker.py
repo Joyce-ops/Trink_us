@@ -9,6 +9,32 @@ drinks_folder = "./drinks"
 # Überschrift der Seite
 st.title("Übersicht Cocktail Klassiker")
 
+# Button für Mojito hinzufügen
+if st.button("Zeige Mojito-Rezept"):
+    mojito_path = os.path.join(drinks_folder, "Mojito")
+    if os.path.exists(mojito_path):
+        # Bildpfad
+        image_path = os.path.join(mojito_path, "image.jpg")
+        if os.path.exists(image_path):
+            image = Image.open(image_path)
+            st.image(image, caption="Mojito", use_column_width=True)
+        
+        # JSON-Rezeptdatei lesen
+        recipe_path = os.path.join(mojito_path, "recipe.json")
+        if os.path.exists(recipe_path):
+            with open(recipe_path, "r", encoding="utf-8") as file:
+                recipe_content = json.load(file)  # JSON-Inhalt laden
+            
+            # Rezeptdetails anzeigen
+            st.write("### Zutaten:")
+            for ingredient in recipe_content.get("ingredients", []):
+                st.write(f"- {ingredient}")
+            
+            st.write("### Zubereitung:")
+            st.write(recipe_content.get("instructions", "Keine Anweisungen verfügbar."))
+    else:
+        st.error("Das Mojito-Rezept wurde nicht gefunden.")
+
 # Überprüfen, ob der Ordner existiert
 if os.path.exists(drinks_folder):
     # Alle Dateien im Ordner auflisten
