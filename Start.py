@@ -29,10 +29,10 @@ st.title('Cocktail Rezepte')
 
 name = st.session_state.get('name')
 st.markdown(f"✨ Hallo {name}! ✨")
-st.markdown("🏃 Die Anwendung ermöglicht es Ihnen, Ihren BMI zu berechnen und im Zeitverlauf zu verfolgen 📊")
+st.markdown("Hier finden Sie Rezepte zu Klassieschen Cocktails. Für jeden Cocktail-Enthiusiast ist etwas dabei!! 🍹🍸")
         
-# Add some health advice
-st.info("""Der BMI ist ein Screening-Tool, aber keine Diagnose für Körperfett oder Gesundheit. 
-Bitte konsultieren Sie einen Arzt für eine vollständige Beurteilung.""")
+# Add some  advice
+st.info("""Diese Cocktail Rezepte enthalten Alkohol, falls Sie nicht volljährig sind, sind diese Rezepte nicht für Sie geeignet. 
+Bitte machen sie die Rezepte ohne den Alkohol.""")
 
-st.write("Diese App wurde von Samuel Wehrli im Rahmen des Moduls 'BMLD Informatik 2' an der ZHAW entwickelt.")
+st.write("Diese App wurde von Carmen Hurschler, Mcqulat Miller und Joyce Baumann im Rahmen des Moduls 'BMLD Informatik 2' an der ZHAW entwickelt.")
