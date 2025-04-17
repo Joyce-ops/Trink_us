@@ -3,9 +3,10 @@ import streamlit as st
 from PIL import Image
 import json  # JSON-Modul importieren
 
-# Pfad zum Ordner mit den Rezepten (jetzt im pages-Ordner)
+# Pfad zum Ordner mit den Rezepten (drinks-Ordner)
 pages_folder = os.path.dirname(os.path.abspath(__file__))
-mojito_folder = os.path.join(pages_folder, "Mojito")
+drinks_folder = os.path.join(pages_folder, "../drinks")  # drinks-Ordner relativ zum pages-Ordner
+mojito_folder = os.path.join(drinks_folder, "Mojito")
 
 # Überschrift der Seite
 st.title("Übersicht Cocktail Klassiker")
