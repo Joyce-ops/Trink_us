@@ -20,13 +20,14 @@
 
 ## Version 1.0 – Grundfunktionen
 1. **Cocktail-Rezept anzeigen**
-   - Finde fünf Cocktail-Rezepte sowie passende Bilder dazu. Diese werden angezeigt auf der Webseite.
+   - Finde fünf Cocktail-Rezepte sowie passende Bilder dazu. 
+   - Diese werden angezeigt auf der Webseite. (7h)
 
 ## Version 2.0 – Erweiterte Informationen
 1. **Login hinzufügen**
-   - Nutzer können sich einloggen und Rezepte abrufen.
+   - Nutzer können sich einloggen und Rezepte abrufen. (2h)
 
 ## Version 3.0 – Konsumverfolgung
 1. **Trinktracker**
-   - Nutzer können ihren Konsum verfolgen und ihre Trinkgewohnheiten im Auge behalten. Ausserdem können die Nutzer ihre Favoriten speichern und auf einer separaten Seite anschauen.
+   - Nutzer können ihren Konsum verfolgen und ihre Trinkgewohnheiten im Auge behalten. Ausserdem können die Nutzer ihre Favoriten speichern und auf einer separaten Seite anschauen. (5h)
 
