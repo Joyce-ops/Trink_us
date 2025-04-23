@@ -23,18 +23,18 @@ if st.button("Zeige Mojito-Rezept"):
             st.warning("Das Bild für Mojito wurde nicht gefunden.")
         
         # JSON-Rezeptdatei lesen
-        recipe_path = os.path.join(mojito_folder, "recipe.json")
-        if os.path.exists(recipe_path):
-            with open(recipe_path, "r", encoding="utf-8") as file:
-                recipe_content = json.load(file)  # JSON-Inhalt laden
+        rezept_path = os.path.join(mojito_folder, "rezept.json")
+        if os.path.exists(rezept_path):
+            with open(rezept_path, "r", encoding="utf-8") as file:
+                rezept_content = json.load(file)  # JSON-Inhalt laden
             
             # Rezeptdetails anzeigen
             st.write("### Zutaten:")
-            for ingredient in recipe_content.get("ingredients", []):
+            for ingredient in rezept_content.get("ingredients", []):
                 st.write(f"- {ingredient}")
             
             st.write("### Zubereitung:")
-            st.write(recipe_content.get("instructions", "Keine Anweisungen verfügbar."))
+            st.write(rezept_content.get("instructions", "Keine Anweisungen verfügbar."))
         else:
             st.warning("Die Rezeptdatei für Mojito wurde nicht gefunden.")
     else:
