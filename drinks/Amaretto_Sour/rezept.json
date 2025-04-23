@@ -1,34 +1,35 @@
-{
-    "name": "Amaretto Sour",
-    "ingredients": [
-        {
-            "name": "Amaretto",
-            "amount": "50ml"
-        },
-        {
-            "name": "Zitronensaft",
-            "amount": "30ml"
-        },
-        {
-            "name": "Zuckersirup",
-            "amount": "10ml"
-        },
-        {
-            "name": "Eiweiß",
-            "amount": "1"
-        },
-        {
-            "name": "Eiswürfel",
-            "amount": "nach Bedarf"
-        }
-    ],
-    "instructions": [
-        "Amaretto, Zitronensaft, Zuckersirup und Eiweiß in einen Shaker geben.",
-        "Kräftig ohne Eis shaken (Dry Shake), um das Eiweiß aufzuschäumen.",
-        "Eiswürfel hinzufügen und erneut shaken, bis der Shaker gut gekühlt ist.",
-        "In ein Glas mit frischen Eiswürfeln abseihen.",
-        "Optional mit einer Zitronenscheibe oder Cocktailkirsche garnieren."
-    ],
-    "glass": "Old Fashioned Glas",
-    "garnish": "Zitronenscheibe oder Cocktailkirsche"
-}
+<div class="cocktail-recipe">
+  <h2>Amaretto Sour</h2>
+  
+  <div class="recipe-section">
+    <h3>🍹 Zutaten</h3>
+    <ul>
+      <li>50ml Amaretto</li>
+      <li>30ml Zitronensaft</li>
+      <li>10ml Zuckersirup</li>
+      <li>1 Eiweiß</li>
+      <li>Eiswürfel nach Bedarf</li>
+    </ul>
+  </div>
+
+  <div class="recipe-section">
+    <h3>🧑‍🍳 Zubereitung</h3>
+    <ol>
+      <li>Amaretto, Zitronensaft, Zuckersirup und Eiweiß in einen Shaker geben.</li>
+      <li>Kräftig ohne Eis shaken (Dry Shake), um das Eiweiß aufzuschäumen.</li>
+      <li>Eiswürfel hinzufügen und erneut shaken, bis der Shaker gut gekühlt ist.</li>
+      <li>In ein Glas mit frischen Eiswürfeln abseihen.</li>
+      <li>Optional mit einer Zitronenscheibe oder Cocktailkirsche garnieren.</li>
+    </ol>
+  </div>
+
+  <div class="recipe-section">
+    <h3>🍸 Glas</h3>
+    <p>Old Fashioned Glas</p>
+  </div>
+
+  <div class="recipe-section">
+    <h3>🍋 Garnitur</h3>
+    <p>Zitronenscheibe oder Cocktailkirsche</p>
+  </div>
+</div>
