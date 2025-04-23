@@ -30,7 +30,7 @@ if os.path.exists(csv_path):
             image_path = os.path.join(drink_folder, "image.jpg")
             if os.path.exists(image_path):
                 image = Image.open(image_path)
-                st.image(image, caption=drink_name, use_column_width=True)
+                st.image(image, caption=drink_name, use_container_width=True)
             else:
                 st.warning(f"Kein Bild für {drink_name} gefunden.")
             
