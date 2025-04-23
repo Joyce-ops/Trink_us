@@ -24,9 +24,8 @@ if os.path.exists(csv_path):
         
         # Überprüfen, ob der Ordner für den Drink existiert
         if os.path.exists(drink_folder):
+            # Bild anzeigen
             st.subheader(drink_name)
-            
-            # Bildpfad
             image_path = os.path.join(drink_folder, "image.jpg")
             if os.path.exists(image_path):
                 image = Image.open(image_path)
@@ -34,21 +33,23 @@ if os.path.exists(csv_path):
             else:
                 st.warning(f"Kein Bild für {drink_name} gefunden.")
             
-            # JSON-Rezeptdatei lesen (angepasst auf rezept.json)
-            recipe_path = os.path.join(drink_folder, "rezept.json")
-            if os.path.exists(recipe_path):
-                with open(recipe_path, "r", encoding="utf-8") as file:
-                    recipe_content = json.load(file)
-                
-                # Rezeptdetails anzeigen
-                st.write("### Zutaten:")
-                for ingredient in recipe_content.get("ingredients", []):
-                    st.write(f"- {ingredient}")
-                
-                st.write("### Zubereitung:")
-                st.write(recipe_content.get("instructions", "Keine Anweisungen verfügbar."))
-            else:
-                st.warning(f"Kein Rezept für {drink_name} gefunden: {recipe_path}")
+            # Button für das Rezept
+            if st.button(f"Zeige Rezept für {drink_name}"):
+                # JSON-Rezeptdatei lesen
+                recipe_path = os.path.join(drink_folder, "rezept.json")
+                if os.path.exists(recipe_path):
+                    with open(recipe_path, "r", encoding="utf-8") as file:
+                        recipe_content = json.load(file)
+                    
+                    # Rezeptdetails anzeigen
+                    st.write("### Zutaten:")
+                    for ingredient in recipe_content.get("ingredients", []):
+                        st.write(f"- {ingredient}")
+                    
+                    st.write("### Zubereitung:")
+                    st.write(recipe_content.get("instructions", "Keine Anweisungen verfügbar."))
+                else:
+                    st.warning(f"Kein Rezept für {drink_name} gefunden: {recipe_path}")
         else:
             st.error(f"Der Ordner für {drink_name} wurde nicht gefunden: {drink_folder}")
 else:
