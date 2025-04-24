@@ -2,7 +2,7 @@
     "name": "Moscow Mule",
     "ingredients": [
         {
-            "name": "Vodka",
+            "name": "Wodka",
             "amount": "50ml"
         },
         {
@@ -10,27 +10,27 @@
             "amount": "120ml"
         },
         {
-            "name": "Lime Juice",
+            "name": "Limettensaft",
             "amount": "10ml"
         },
         {
-            "name": "Ice Cubes",
-            "amount": "as needed"
+            "name": "Eiswürfel",
+            "amount": "nach Bedarf"
         },
         {
-            "name": "Lime Slice",
-            "amount": "1 slice"
+            "name": "Limettenscheibe",
+            "amount": "1 Scheibe"
         },
         {
-            "name": "Mint Leaves",
-            "amount": "a few"
+            "name": "Minzblätter",
+            "amount": "ein paar"
         }
     ],
     "instructions": [
-        "Fill a copper mug with ice cubes.",
-        "Pour in the vodka and lime juice.",
-        "Top up with ginger beer and stir gently.",
-        "Garnish with a lime slice and mint leaves.",
-        "Serve immediately and enjoy."
+        "Fülle einen Kupferbecher mit Eiswürfeln.",
+        "Gieße den Wodka und den Limettensaft hinein.",
+        "Mit Ginger Beer auffüllen und vorsichtig umrühren.",
+        "Mit einer Limettenscheibe und Minzblättern garnieren.",
+        "Sofort servieren und genießen."
     ]
 }

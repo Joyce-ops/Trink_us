@@ -2,29 +2,29 @@
     "cocktail": "Manhattan",
     "ingredients": [
         {
-            "name": "Rye Whiskey",
+            "name": "Roggenwhiskey",
             "amount": "60ml"
         },
         {
-            "name": "Sweet Vermouth",
+            "name": "Süßer Wermut",
             "amount": "30ml"
         },
         {
-            "name": "Angostura Bitters",
-            "amount": "2 dashes"
+            "name": "Angostura-Bitter",
+            "amount": "2 Tropfen"
         },
         {
-            "name": "Cherry",
-            "amount": "1 (for garnish)"
+            "name": "Kirsche",
+            "amount": "1 (zur Garnitur)"
         }
     ],
     "instructions": [
-        "Fill a mixing glass with ice.",
-        "Add Rye Whiskey, Sweet Vermouth, and Angostura Bitters.",
-        "Stir well until chilled.",
-        "Strain into a chilled cocktail glass.",
-        "Garnish with a cherry."
+        "Fülle ein Rührglas mit Eis.",
+        "Füge Roggenwhiskey, süßen Wermut und Angostura-Bitter hinzu.",
+        "Gut umrühren, bis der Drink gekühlt ist.",
+        "In ein gekühltes Cocktailglas abseihen.",
+        "Mit einer Kirsche garnieren."
     ],
-    "glass": "Cocktail Glass",
-    "category": "Classic"
+    "glass": "Cocktailglas",
+    "category": "Klassisch"
 }
