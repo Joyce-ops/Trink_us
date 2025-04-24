@@ -34,7 +34,7 @@ if os.path.exists(csv_path):
                 st.warning(f"Kein Bild für {drink_name} gefunden.")
             
             # Button für das Rezept
-            if st.button(f"Zeige Rezept für {drink_name}"):
+            if st.button(f"Rezept {drink_name}"):
                 # JSON-Rezeptdatei lesen
                 recipe_path = os.path.join(drink_folder, "rezept.json")
                 if os.path.exists(recipe_path):
@@ -44,7 +44,12 @@ if os.path.exists(csv_path):
                     # Rezeptdetails anzeigen
                     st.write("### Zutaten:")
                     for ingredient in recipe_content.get("ingredients", []):
-                        st.write(f"- {ingredient}")
+                        name, amount = ingredient.get("name"), ingredient.get("amount")
+                        if name and amount:
+                            st.write(f"- {amount} {name}")
+                        else:
+                            # Falls kein Name oder Menge vorhanden ist
+                            ingredient = name if name else amount if amount else "Unbekanntes Ingredient"
                     
                     st.write("### Zubereitung:")
                     st.write(recipe_content.get("instructions", "Keine Anweisungen verfügbar."))
