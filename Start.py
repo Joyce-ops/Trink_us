@@ -29,10 +29,14 @@ st.title('Cocktail Rezepte')
 
 name = st.session_state.get('name')
 st.markdown(f"✨ Hallo {name}! ✨")
-st.markdown("Hier finden Sie Rezepte zu Klassieschen Cocktails. Für jeden Cocktail-Enthiusiast ist etwas dabei!! 🍹🍸")
+st.markdown("Willkommen bei Trink us. Bei uns findest du zahlreiche Cocktails, die deinen Abend unvergesslich und geschmacksvoll machen. Für jeden Cocktail-Enthiusiast ist etwas dabei!! 🍹")
         
 # Add some  advice
-st.info("""Diese Cocktail Rezepte enthalten Alkohol, falls Sie nicht volljährig sind, sind diese Rezepte nicht für Sie geeignet. 
-Bitte machen sie die Rezepte ohne den Alkohol.""")
+st.info("""
+##### **ℹ️ Hinweis zum Alkoholkonsum: ℹ️**  
+Diese Cocktailrezepte enthalten alkoholische Zutaten.  
+Wenn du noch nicht volljährig bist, empfehlen wir dir, die Rezepte ohne Alkohol zuzubereiten als leckere Mocktail-Variante!  
+Genieße verantwortungsvoll und altersgerecht. 🍸✨
+""")
 
 st.write("Diese App wurde von Carmen Hurschler, Mcqulat Miller und Joyce Baumann im Rahmen des Moduls 'BMLD Informatik 2' an der ZHAW entwickelt.")
