@@ -50,8 +50,10 @@ def main():
                         # Favorit hinzufügen
                         if st.button(f"Zu Favoriten hinzufügen: {drink['strDrink']}", key=f"fav_{drink['idDrink']}"):
                             # Favoriten aktualisieren
-                            if drink["strDrink"] not in st.session_state["favoriten"]:
-                                st.session_state["favoriten"].append(drink["strDrink"])
+                            favoriten = st.session_state.get("favoriten", [])
+                            if drink["strDrink"] not in favoriten:
+                                favoriten.append(drink["strDrink"])
+                                st.session_state["favoriten"] = favoriten
                                 st.success(f"'{drink['strDrink']}' wurde zu den Favoriten hinzugefügt!")
                             else:
                                 st.warning(f"'{drink['strDrink']}' ist bereits in den Favoriten.")
@@ -61,7 +63,7 @@ def main():
             st.warning("Bitte gib einen Namen ein.")
 
     # Favoriten anzeigen
-    st.markdown("## 🌟 Meistgesuchte Rezepte")
+    st.markdown("## 🌟 Deine Favoriten")
     if st.session_state["favoriten"]:
         for fav in st.session_state["favoriten"]:
             st.write(f"- {fav}")
