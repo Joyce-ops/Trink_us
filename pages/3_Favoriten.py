@@ -17,7 +17,7 @@ rezept_titel = st.text_input("Titel des Rezepts:")
 if rezept_titel:
     # Überprüfen, ob das Rezept bereits existiert
     if not any(rezept["titel"] == rezept_titel for rezept in st.session_state["favoriten"]):
-        # Rezept automatisch erstellen (hier kannst du die Logik für das Rezept anpassen)
+        # Rezept automatisch erstellen
         neues_rezept = {
             "titel": rezept_titel,
             "beschreibung": f"Automatisch generiertes Rezept für {rezept_titel}."
@@ -30,9 +30,11 @@ if rezept_titel:
 # Gespeicherte Rezepte anzeigen
 st.write("### Ihre gespeicherten Rezepte:")
 if st.session_state["favoriten"]:
-    for rezept in st.session_state["favoriten"]:
+    for index, rezept in enumerate(st.session_state["favoriten"]):
         st.write(f"**{rezept['titel']}**")
-        st.write(rezept["beschreibung"])
+        # Button für jedes Rezept
+        if st.button(f"Details zu '{rezept['titel']}' anzeigen", key=f"details_{index}"):
+            st.write(rezept["beschreibung"])
         st.write("---")
 else:
     st.write("Noch keine Favoriten gespeichert.")
