@@ -25,11 +25,6 @@ data_manager.load_user_data(
 # ------------------------------------------------------------
 # Here starts the actual app, which was developed previously
 
-# Login-Überprüfung
-if "logged_in" not in st.session_state or not st.session_state["logged_in"]:
-    st.warning("Bitte logge dich ein, um auf die Inhalte zuzugreifen.")
-    st.stop()
-
 # Titel der Seite
 st.title('Cocktail Rezepte')
 
