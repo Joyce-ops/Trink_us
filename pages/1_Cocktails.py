@@ -4,6 +4,7 @@ from PIL import Image
 import json
 import pandas as pd  # Für das Lesen der CSV-Datei
 
+
 # Pfad zum drinks-Ordner und zur CSV-Datei
 pages_folder = os.path.dirname(os.path.abspath(__file__))
 drinks_folder = os.path.join(pages_folder, "../drinks")

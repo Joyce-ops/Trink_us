@@ -1,8 +1,8 @@
 import requests
 import streamlit as st
- 
+
 API = "https://www.thecocktaildb.com/api"
- 
+
 def get_cocktails(cocktail_name=None):
     api_url = f"{API}/json/v1/1/search.php?s={cocktail_name}"
     response = requests.get(api_url)
@@ -16,7 +16,7 @@ def get_cocktails(cocktail_name=None):
     else:
         st.error(f"Fehler beim Abrufen der Daten. Status-Code: {response.status_code}")
         return None
- 
+
 def display_recipe(drink):
     st.image(drink["strDrinkThumb"], width=300)
     st.markdown(f"### 🥂 {drink['strDrink']}")
@@ -29,12 +29,17 @@ def display_recipe(drink):
             st.write(f"- {menge if menge else ''} {zutat}")
     st.markdown("#### 📖 Zubereitung:")
     st.write(drink["strInstructionsDE"] or drink["strInstructions"] or "Keine Anleitung verfügbar.")
- 
+
 def main():
     st.set_page_config(page_title="Cocktail-Rezepte", page_icon="🍹")
     st.title("🍸 Cocktail library")
     cocktail_name = st.text_input("Gib einen Cocktailnamen ein (z. B. Margarita, Mojito, Daiquiri):")
- 
+
+    # Favoriten initialisieren
+    if "favoriten" not in st.session_state:
+        st.session_state["favoriten"] = []
+
+    # Rezept anzeigen
     if st.button("Rezept anzeigen"):
         if cocktail_name:
             daten = get_cocktails(cocktail_name)
@@ -42,10 +47,26 @@ def main():
                 for drink in daten["drinks"]:
                     with st.expander(drink["strDrink"]):
                         display_recipe(drink)
+                        # Favorit hinzufügen
+                        if st.button(f"Zu Favoriten hinzufügen: {drink['strDrink']}", key=f"fav_{drink['idDrink']}"):
+                            # Favoriten aktualisieren
+                            if drink["strDrink"] not in st.session_state["favoriten"]:
+                                st.session_state["favoriten"].append(drink["strDrink"])
+                                st.success(f"'{drink['strDrink']}' wurde zu den Favoriten hinzugefügt!")
+                            else:
+                                st.warning(f"'{drink['strDrink']}' ist bereits in den Favoriten.")
             else:
                 st.error("Kein Cocktail mit diesem Namen gefunden.")
         else:
             st.warning("Bitte gib einen Namen ein.")
- 
+
+    # Favoriten anzeigen
+    st.markdown("## 🌟 Meistgesuchte Rezepte")
+    if st.session_state["favoriten"]:
+        for fav in st.session_state["favoriten"]:
+            st.write(f"- {fav}")
+    else:
+        st.write("Noch keine Favoriten gespeichert.")
+
 if __name__ == "__main__":
     main()
