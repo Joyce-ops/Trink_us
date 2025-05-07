@@ -57,3 +57,4 @@ if st.session_state["favoriten"]:
         st.write("---")
 else:
     st.write("Noch keine Favoriten gespeichert.")
+    

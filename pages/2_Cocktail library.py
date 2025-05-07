@@ -61,14 +61,3 @@ def main():
                 st.error("Kein Cocktail mit diesem Namen gefunden.")
         else:
             st.warning("Bitte gib einen Namen ein.")
-
-    # Favoriten anzeigen
-    st.markdown("## 🌟 Deine Favoriten")
-    if st.session_state["favoriten"]:
-        for fav in st.session_state["favoriten"]:
-            st.write(f"- {fav}")
-    else:
-        st.write("Noch keine Favoriten gespeichert.")
-
-if __name__ == "__main__":
-    main()
