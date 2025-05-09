@@ -4,10 +4,9 @@
 import pandas as pd
 from utils.data_manager import DataManager
 from utils.login_manager import LoginManager
-import streamlit as st
 
 # initialize the data manager
-data_manager = DataManager(fs_protocol='webdav', fs_root_folder="Trink_us")  # switch drive 
+data_manager = DataManager(fs_protocol='webdav', fs_root_folder="AppV1")  # switch drive 
 
 # initialize the login manager
 login_manager = LoginManager(data_manager)
@@ -17,13 +16,18 @@ login_manager.login_register()  # open login/register page
 data_manager.load_user_data(
     session_state_key='data_df', 
     file_name='data.csv', 
-    initial_value=pd.DataFrame(), 
-    parse_dates=['timestamp']
-)
+    initial_value = pd.DataFrame(), 
+    parse_dates = ['timestamp']
+    )
 # ====== End Init Block ======
 
 # ------------------------------------------------------------
 # Here starts the actual app, which was developed previously
+import streamlit as st
+
+# Initialisiere den Seitenstatus
+if "page" not in st.session_state:
+    st.session_state["page"] = "main"
 
 # Titel der Seite
 st.title('Cocktail Rezepte')
