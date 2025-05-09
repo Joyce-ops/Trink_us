@@ -1,10 +1,13 @@
+import requests
+import streamlit as st
+
+# Streamlit-Seitenkonfiguration muss zuerst kommen
+st.set_page_config(page_title="Cocktail-Rezepte", page_icon="🍹")
+
 # ====== Start Login Block ======
 from utils.login_manager import LoginManager
 LoginManager().go_to_login('Start.py') 
 # ====== End Login Block ======
-
-import requests
-import streamlit as st
 
 # API-URL
 API = "https://www.thecocktaildb.com/api"
@@ -52,7 +55,6 @@ def display_recipe(drink):
 
 # Hauptfunktion
 def main():
-    st.set_page_config(page_title="Cocktail-Rezepte", page_icon="🍹")
     st.title("🍸 Cocktail-Rezepte & Favoriten")
 
     # Session-State initialisieren
@@ -100,6 +102,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-

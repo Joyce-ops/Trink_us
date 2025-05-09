@@ -13,12 +13,27 @@ st.title("Favoriten")
 # Beschreibung
 st.write("Hier können Sie Ihre Lieblingsrezepte speichern und verwalten.")
 
+# Pfad zur JSON-Datei für Favoriten
+pages_folder = os.path.dirname(os.path.abspath(__file__))
+favoriten_datei = os.path.join(pages_folder, "../favoriten.json")
+
+# Favoriten aus der JSON-Datei laden
+def favoriten_laden():
+    if os.path.exists(favoriten_datei):
+        with open(favoriten_datei, "r", encoding="utf-8") as file:
+            return json.load(file)
+    return []
+
+# Favoriten in der JSON-Datei speichern
+def favoriten_speichern(favoriten):
+    with open(favoriten_datei, "w", encoding="utf-8") as file:
+        json.dump(favoriten, file, ensure_ascii=False, indent=4)
+
 # Favoriten-Liste initialisieren
 if "favoriten" not in st.session_state:
-    st.session_state["favoriten"] = []
+    st.session_state["favoriten"] = favoriten_laden()
 
 # Pfad zum Ordner mit den Rezepten
-pages_folder = os.path.dirname(os.path.abspath(__file__))
 drinks_folder = os.path.join(pages_folder, "../drinks")
 
 # Eingabefeld für neues Rezept
@@ -38,6 +53,7 @@ if rezept_titel:
                 "beschreibung": rezept_inhalt  # Das gesamte Rezept wird gespeichert
             }
             st.session_state["favoriten"].append(neues_rezept)
+            favoriten_speichern(st.session_state["favoriten"])  # Favoriten speichern
             st.success(f"Rezept '{rezept_titel}' wurde hinzugefügt!")
         else:
             st.error(f"Kein Rezept für '{rezept_titel}' gefunden.")
@@ -62,4 +78,3 @@ if st.session_state["favoriten"]:
         st.write("---")
 else:
     st.write("Noch keine Favoriten gespeichert.")
-    
