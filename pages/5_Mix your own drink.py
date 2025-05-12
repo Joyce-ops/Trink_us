@@ -11,7 +11,7 @@ base = st.selectbox("Wähle deine Basis-Spirituose:", [
     "Rum", "Wodka", "Gin", "Tequila", "Whiskey", "Likör", "Ohne Alkohol"
 ])
 
-st.markdown("---")
+st.divider()
 
 # Zutaten-Auswahl (Standard + Eigene)
 st.subheader("Zutaten auswählen oder eigene hinzufügen")
@@ -43,7 +43,7 @@ with st.form("Eigene Zutat hinzufügen"):
         else:
             st.warning("Bitte gib eine gültige Zutat ein.")
 
-st.markdown("---")
+st.divider()
 
 # Deko
 decoration = st.selectbox("Wähle eine Dekoration:", [
