@@ -1,13 +1,14 @@
-import requests
 import streamlit as st
 
-# Streamlit-Seitenkonfiguration
+# Seite konfigurieren (muss die erste Streamlit-Funktion sein)
 st.set_page_config(page_title="Mocktail-Rezepte", page_icon="🍹")
 
 # ====== Start Login Block ======
 from utils.login_manager import LoginManager
 LoginManager().go_to_login('Start.py') 
 # ====== End Login Block ======
+
+import requests
 
 # API-URL (Mocktails)
 API = "https://www.thecocktaildb.com/api/json/v1/1/filter.php?a=Non_Alcoholic"

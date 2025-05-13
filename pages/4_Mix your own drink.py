@@ -3,6 +3,11 @@ import streamlit as st
 # Seite konfigurieren (muss die erste Streamlit-Funktion sein)
 st.set_page_config(page_title="Cocktail Creator", page_icon="🍹", layout="centered")
 
+# ====== Start Login Block ======
+from utils.login_manager import LoginManager
+LoginManager().go_to_login('Start.py') 
+# ====== End Login Block ======
+
 # CSS für das Formularfeld
 form_css = """
 <style>
