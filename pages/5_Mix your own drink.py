@@ -31,6 +31,18 @@ default_ingredients = [
 if "custom_ingredients" not in st.session_state:
     st.session_state.custom_ingredients = []
 
+# Eigene Zutat hinzufügen (außerhalb des Formulars)
+st.markdown("##### Eigene Zutat hinzufügen")
+custom_input = st.text_input("Eigene Zutat:", placeholder="z. B. Lavendel, Matcha...")
+if st.button("➕ Hinzufügen"):
+    if custom_input and custom_input not in st.session_state.custom_ingredients:
+        st.session_state.custom_ingredients.append(custom_input)
+        st.success(f"'{custom_input}' wurde hinzugefügt!")
+    elif custom_input in st.session_state.custom_ingredients:
+        st.warning("Diese Zutat wurde bereits hinzugefügt.")
+    else:
+        st.warning("Bitte gib eine gültige Zutat ein.")
+
 # Formular für die Cocktail-Gestaltung
 with st.form("cocktail_form"):
     st.subheader("Gestalte deinen Cocktail 🍹")
@@ -44,25 +56,13 @@ with st.form("cocktail_form"):
     ])
 
     # Zutaten-Auswahl
-    st.markdown("##### Zutaten auswählen oder eigene hinzufügen")
+
     all_ingredients = default_ingredients + st.session_state.custom_ingredients
     selected_ingredients = st.multiselect("Wähle deine Zutaten:", all_ingredients)
 
-    # Eigene Zutat hinzufügen
-    custom_input = st.text_input("Eigene Zutat hinzufügen:", placeholder="z. B. Lavendel, Matcha...")
-    if st.form_submit_button("➕ Eigene Zutat hinzufügen"):
-        if custom_input and custom_input not in st.session_state.custom_ingredients:
-            st.session_state.custom_ingredients.append(custom_input)
-            st.success(f"'{custom_input}' wurde hinzugefügt!")
-        elif custom_input in st.session_state.custom_ingredients:
-            st.warning("Diese Zutat wurde bereits hinzugefügt.")
-        else:
-            st.warning("Bitte gib eine gültige Zutat ein.")
-
     # Dekoration
-    st.markdown("##### Dekoration auswählen")
     decoration = st.selectbox("Wähle eine Dekoration:", [
-        "Limettenscheibe", "Cocktailkirsche", "Minzzweig", "Zuckerrand", "Keine"
+    "Limettenscheibe", "Cocktailkirsche", "Minzzweig", "Zuckerrand", "Keine"
     ])
 
     # Cocktail mixen Button
