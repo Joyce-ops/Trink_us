@@ -1,6 +1,23 @@
 import streamlit as st
 
+# Seite konfigurieren (muss die erste Streamlit-Funktion sein)
 st.set_page_config(page_title="Cocktail Creator", page_icon="🍹", layout="centered")
+
+# CSS für das Formularfeld
+form_css = """
+<style>
+div[data-testid="stForm"] {
+    background-color: #8fbf93; /* Grün */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+</style>
+"""
+
+# CSS in Streamlit einfügen
+st.markdown(form_css, unsafe_allow_html=True)
+
 st.title("🍸 Dein eigener Cocktail-Mixer")
 
 # Standardzutaten
@@ -27,7 +44,7 @@ with st.form("cocktail_form"):
     ])
 
     # Zutaten-Auswahl
-    st.markdown("### Zutaten auswählen oder eigene hinzufügen")
+    st.markdown("##### Zutaten auswählen oder eigene hinzufügen")
     all_ingredients = default_ingredients + st.session_state.custom_ingredients
     selected_ingredients = st.multiselect("Wähle deine Zutaten:", all_ingredients)
 
@@ -43,7 +60,7 @@ with st.form("cocktail_form"):
             st.warning("Bitte gib eine gültige Zutat ein.")
 
     # Dekoration
-    st.markdown("### Dekoration auswählen")
+    st.markdown("##### Dekoration auswählen")
     decoration = st.selectbox("Wähle eine Dekoration:", [
         "Limettenscheibe", "Cocktailkirsche", "Minzzweig", "Zuckerrand", "Keine"
     ])
