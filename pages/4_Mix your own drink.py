@@ -105,7 +105,7 @@ st.subheader("Gespeicherte Cocktails")
 if cocktails:
     for name, details in cocktails.items():
         st.markdown(f"""
-        **{name}**
+        ### {name} 
         - **Basis:** {details['Basis']}
         - **Zutaten:** {', '.join(details['Zutaten']) if details['Zutaten'] else 'Keine'}
         - **Deko:** {details['Deko']}

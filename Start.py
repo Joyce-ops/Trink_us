@@ -5,6 +5,46 @@ import pandas as pd
 from utils.data_manager import DataManager
 from utils.login_manager import LoginManager
 
+import streamlit as st
+
+# CSS-Funktion für blassen Hintergrund und Textanpassung
+def set_faded_background_and_text(image_url):
+    st.markdown(
+        f"""
+        <style>
+        .stApp {{
+            background: linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)),
+                        url("{image_url}");
+            background-size: cover;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-position: center;
+        }}
+
+        /* Optional: Inhalte leicht hervorheben */
+        .stApp > div:first-child {{
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }}
+
+        /* Text dunkler und leicht dicker */
+        .stMarkdown, .stTitle, .stInfo {{
+            color: #333333; /* Dunklere Schriftfarbe */
+            font-weight: 500; /* Leicht dickere Schrift */
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+# Deine Bild-URL
+image_url = "https://lamanne-paris.fr/wp-content/uploads/2021/07/astuces-ruiner-2048x1234.jpeg"
+
+# Hintergrund und Textanpassung anwenden
+set_faded_background_and_text(image_url)
+
 # initialize the data manager
 data_manager = DataManager(fs_protocol='webdav', fs_root_folder="AppV1")  # switch drive 
 
