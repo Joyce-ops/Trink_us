@@ -8,45 +8,7 @@ import json
 import streamlit as st
 
 # Titel der Seite
-st.title("🌟 Ihre Favoriten")
-
-# Beschreibung
-st.write("Hier können Sie Ihre Lieblingsrezepte speichern und verwalten.")
-
-# CSS für die Gestaltung
-favoriten_css = """
-<style>
-body {
-    background-color: #f5f5f5; /* Helles Grau für den Hintergrund */
-}
-div[data-testid="stVerticalBlock"] {
-    background-color: #000000; /* Schwarzer Hintergrund für die Box */
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-    border-left: 5px solid #8fbf93; /* Grüner Akzent an der Seite */
-}
-h1, h2, h3, h4, h5, h6, p, div {
-    color: #ffffff; /* Weißer Text */
-}
-button {
-    background-color: #8fbf93 !important; /* Grüner Button */
-    color: white !important; /* Weißer Text auf dem Button */
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 14px;
-    cursor: pointer;
-}
-button:hover {
-    background-color: #7aad84 !important; /* Dunkleres Grün beim Hover */
-}
-</style>
-"""
-
-# CSS in Streamlit einfügen
-st.markdown(favoriten_css, unsafe_allow_html=True)
+st.title("Ihre Favoriten 🍹")
 
 # Pfad zur JSON-Datei für Favoriten
 pages_folder = os.path.dirname(os.path.abspath(__file__))
@@ -67,22 +29,24 @@ def favoriten_laden():
 favoriten = favoriten_laden()
 
 # Gespeicherte Favoriten anzeigen
-st.write("### Ihre gespeicherten Rezepte:")
+st.write("Ihre gespeicherten Rezepte:")
 if favoriten:
+    # Teile die Favoriten in 3 Spalten auf
+    cols = st.columns(3)
     for index, rezept in enumerate(favoriten):
-        with st.container():
-            st.markdown(f"**{rezept['strDrink']}**")
+        # Wähle die aktuelle Spalte basierend auf dem Index
+        col = cols[index % 3]
+        with col:
             st.image(rezept["strDrinkThumb"], width=150)
-            # Button für jedes Rezept
-            if st.button(f"Details zu '{rezept['strDrink']}' anzeigen", key=f"details_{index}"):
-                # Rezeptdetails anzeigen (Mock-Daten, da API keine Details liefert)
-                st.write("### Zutaten:")
+            st.write(f"**{rezept['strDrink']}**")
+            
+            # Button für Details
+            if st.button(f"zum Rezept", key=f"details_{index}"):
+                st.write("Zutaten:")
                 st.write("- 50ml Tequila")
                 st.write("- 25ml Triple Sec")
                 st.write("- 25ml Limettensaft")
-                st.write("### Zubereitung:")
-                st.write("- Alle Zutaten in einem Shaker mit Eis mischen.")
-                st.write("- In ein Glas mit Salzrand abseihen.")
-            st.write("---")
+                st.write("Zubereitung:")
+                st.write("Alle Zutaten in einem Shaker mit Eis mischen. In ein Glas mit Salzrand abseihen.")
 else:
     st.warning("Noch keine Favoriten gespeichert.")
