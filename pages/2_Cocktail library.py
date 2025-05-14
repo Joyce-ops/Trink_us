@@ -1,104 +1,70 @@
+import os
+import json
 import requests
 import streamlit as st
 
-# Streamlit-Seitenkonfiguration muss zuerst kommen
-st.set_page_config(page_title="Cocktail-Rezepte", page_icon="🍹")
+# Titel der Seite
+st.title("🍹 Cocktail Library")
 
-# ====== Start Login Block ======
-from utils.login_manager import LoginManager
-LoginManager().go_to_login('Start.py') 
-# ====== End Login Block ======
+# Pfad zur JSON-Datei für Favoriten
+pages_folder = os.path.dirname(os.path.abspath(__file__))
+favoriten_datei = os.path.join(pages_folder, "../favoriten.json")
 
-# API-URL
-API = "https://www.thecocktaildb.com/api"
+# Favoriten aus der JSON-Datei laden
+def favoriten_laden():
+    if os.path.exists(favoriten_datei):
+        with open(favoriten_datei, "r", encoding="utf-8") as file:
+            try:
+                return json.load(file)
+            except json.JSONDecodeError:
+                st.error("Fehler beim Laden der Favoriten. Die Datei ist beschädigt.")
+                return []
+    return []
 
-# Funktion: Cocktails suchen
-def get_cocktails(cocktail_name=None):
-    api_url = f"{API}/json/v1/1/search.php?s={cocktail_name}"
-    response = requests.get(api_url)
+# Favoriten in der JSON-Datei speichern
+def favoriten_speichern(favoriten):
+    with open(favoriten_datei, "w", encoding="utf-8") as file:
+        json.dump(favoriten, file, ensure_ascii=False, indent=4)
+
+# Favoriten initialisieren
+favoriten = favoriten_laden()
+
+# Validierung der Favoriten-Liste
+favoriten = [fav for fav in favoriten if "idDrink" in fav]
+
+# Funktion: Cocktails aus der API suchen
+def suche_cocktails(suchbegriff):
+    url = f"https://www.thecocktaildb.com/api/json/v1/1/search.php?s={suchbegriff}"
+    response = requests.get(url)
     if response.status_code == 200:
-        try:
-            return response.json()
-        except requests.exceptions.JSONDecodeError:
-            st.error("Fehler beim Verarbeiten der Antwort von der API.")
-            return None
+        data = response.json()
+        return data.get("drinks", [])
     else:
-        st.error(f"Fehler beim Abrufen: Status-Code {response.status_code}")
-        return None
+        st.error("Fehler beim Abrufen der Cocktails. Bitte versuche es später erneut.")
+        return []
 
-# Funktion: Rezept anzeigen & Daten für Favoriten vorbereiten
-def display_recipe(drink):
-    st.image(drink["strDrinkThumb"], width=300)
-    st.markdown(f"### 🥂 {drink['strDrink']}")
-    st.markdown(f"**Glas:** {drink['strGlass']}")
-    st.markdown("#### 🧂 Zutaten:")
-    
-    zutaten_liste = []
-    for i in range(1, 16):
-        zutat = drink.get(f"strIngredient{i}")
-        menge = drink.get(f"strMeasure{i}")
-        if zutat:
-            zutaten_liste.append({"name": zutat, "amount": menge if menge else ""})
-            st.write(f"- {menge if menge else ''} {zutat}")
-    
-    anleitung = drink.get("strInstructionsDE") or drink.get("strInstructions") or "Keine Anleitung verfügbar."
-    st.markdown("#### 📖 Zubereitung:")
-    st.write(anleitung)
+# Suchleiste für Cocktails
+suchbegriff = st.text_input("🔍 Suche nach einem Cocktail:", placeholder="Gib einen Cocktailnamen ein...")
 
-    return {
-        "titel": drink["strDrink"],
-        "beschreibung": {
-            "ingredients": zutaten_liste,
-            "instructions": [anleitung]
-        }
-    }
-
-# Hauptfunktion
-def main():
-    st.title("🍸 Cocktail-Rezepte & Favoriten")
-
-    # Session-State initialisieren
-    if "favoriten" not in st.session_state:
-        st.session_state["favoriten"] = []
-
-    # Eingabefeld für Cocktailsuche
-    cocktail_name = st.text_input("🔍 Gib einen Cocktailnamen ein:")
-
-    # Rezepte anzeigen
-    if st.button("Rezepte suchen"):
-        if cocktail_name:
-            daten = get_cocktails(cocktail_name)
-            if daten and daten["drinks"]:
-                for drink in daten["drinks"]:
-                    with st.expander(drink["strDrink"]):
-                        rezept_objekt = display_recipe(drink)
-
-                        # Eindeutiger Button pro Rezept
-                        if st.button("⭐ Zu Favoriten hinzufügen", key=f"fav_{drink['idDrink']}"):
-                            favoriten = st.session_state["favoriten"]
-                            # Duplikate verhindern
-                            if not any(f["titel"] == rezept_objekt["titel"] for f in favoriten):
-                                favoriten.append(rezept_objekt)
-                                st.success(f"'{rezept_objekt['titel']}' wurde zu den Favoriten hinzugefügt!")
-                            else:
-                                st.warning(f"'{rezept_objekt['titel']}' ist bereits in den Favoriten.")
-            else:
-                st.error("❌ Kein Cocktail gefunden.")
-        else:
-            st.warning("Bitte gib einen Namen ein.")
-
-    # Favoriten anzeigen
-    if st.session_state["favoriten"]:
-        st.markdown("---")
-        st.markdown("## ⭐ Ihre Favoriten")
-        for index, fav in enumerate(st.session_state["favoriten"]):
-            with st.expander(fav["titel"]):
-                st.markdown("### 🧂 Zutaten:")
-                for z in fav["beschreibung"]["ingredients"]:
-                    st.write(f"- {z['amount']} {z['name']}")
-                st.markdown("### 📖 Zubereitung:")
-                for step in fav["beschreibung"]["instructions"]:
-                    st.write(f"- {step}")
-
-if __name__ == "__main__":
-    main()
+# Cocktails suchen und anzeigen
+if suchbegriff:
+    cocktails = suche_cocktails(suchbegriff)
+    if cocktails:
+        for cocktail in cocktails:
+            st.image(cocktail["strDrinkThumb"], width=150)
+            st.write(f"### {cocktail['strDrink']}")
+            
+            # Button zum Hinzufügen zu Favoriten
+            if st.button(f"Zu Favoriten hinzufügen: {cocktail['strDrink']}", key=f"add_fav_{cocktail['idDrink']}"):
+                # Überprüfen, ob der Cocktail bereits in den Favoriten ist
+                if not any(fav.get("idDrink") == cocktail["idDrink"] for fav in favoriten):
+                    # Favorit hinzufügen
+                    favoriten.append(cocktail)
+                    favoriten_speichern(favoriten)  # Favoriten speichern
+                    st.success(f"'{cocktail['strDrink']}' wurde zu den Favoriten hinzugefügt!")
+                else:
+                    st.warning(f"'{cocktail['strDrink']}' ist bereits in den Favoriten.")
+    else:
+        st.warning("Keine Cocktails gefunden. Bitte versuche es mit einem anderen Suchbegriff.")
+else:
+    st.info("Gib einen Suchbegriff ein, um Cocktails zu finden.")
