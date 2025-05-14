@@ -54,7 +54,7 @@ def add_drink(drink_name):
         st.session_state["drink_counts"][drink_name] = 1
 
 # Drink-Eingabe
-drink_input = st.text_input("Wie heißt der Drink, den du konsumierst?")
+drink_input = st.text_input("Wie heißt der Drink in deiner Hand ?")
 
 # Button zum Hinzufügen aus Eingabefeld
 if drink_input:
