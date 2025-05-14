@@ -1,117 +1,71 @@
+import os
+import json
+import requests
 import streamlit as st
 
-# Seite konfigurieren (muss die erste Streamlit-Funktion sein)
-st.set_page_config(page_title="Mocktail-Rezepte", page_icon="🍹")
+# Titel der Seite
+st.title("🍹 Mocktail Library")
 
-# ====== Start Login Block ======
-from utils.login_manager import LoginManager
-LoginManager().go_to_login('Start.py') 
-# ====== End Login Block ======
+# Pfad zur JSON-Datei für Favoriten
+pages_folder = os.path.dirname(os.path.abspath(__file__))
+favoriten_datei = os.path.join(pages_folder, "../favoriten.json")
 
-import requests
+# Favoriten aus der JSON-Datei laden
+def favoriten_laden():
+    if os.path.exists(favoriten_datei):
+        with open(favoriten_datei, "r", encoding="utf-8") as file:
+            try:
+                return json.load(file)
+            except json.JSONDecodeError:
+                st.error("Fehler beim Laden der Favoriten. Die Datei ist beschädigt.")
+                return []
+    return []
 
-# API-URL (Mocktails)
-API = "https://www.thecocktaildb.com/api/json/v1/1/filter.php?a=Non_Alcoholic"
+# Favoriten in der JSON-Datei speichern
+def favoriten_speichern(favoriten):
+    with open(favoriten_datei, "w", encoding="utf-8") as file:
+        json.dump(favoriten, file, ensure_ascii=False, indent=4)
 
-# Detail-Endpunkt für Drink-Details
-DETAIL_API = "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i="
+# Favoriten initialisieren
+favoriten = favoriten_laden()
 
-# Funktion: Alle Mocktails abrufen (zunächst IDs und Namen)
-def get_mocktails():
-    response = requests.get(API)
+# Validierung der Favoriten-Liste
+favoriten = [fav for fav in favoriten if "idDrink" in fav]
+
+# Funktion: Mocktails aus der API suchen
+def suche_mocktails(suchbegriff=None):
+    url = f"https://www.thecocktaildb.com/api/json/v1/1/filter.php?a=Non_Alcoholic"
+    response = requests.get(url)
     if response.status_code == 200:
-        try:
-            return response.json()["drinks"]
-        except requests.exceptions.JSONDecodeError:
-            st.error("Fehler beim Verarbeiten der Antwort von der API.")
-            return []
+        data = response.json()
+        drinks = data.get("drinks", [])
+        if suchbegriff:
+            # Filtere die Mocktails basierend auf dem Suchbegriff
+            return [drink for drink in drinks if suchbegriff.lower() in drink["strDrink"].lower()]
+        return drinks  # Zeige alle Mocktails, wenn kein Suchbegriff eingegeben wurde
     else:
-        st.error(f"Fehler beim Abrufen: Status-Code {response.status_code}")
+        st.error("Fehler beim Abrufen der Mocktails. Bitte versuche es später erneut.")
         return []
 
-# Detaildaten zu einem Drink holen
-def get_drink_details(drink_id):
-    response = requests.get(f"{DETAIL_API}{drink_id}")
-    if response.status_code == 200:
-        try:
-            return response.json()["drinks"][0]
-        except:
-            return None
-    return None
+# Suchleiste für Mocktails
+suchbegriff = st.text_input("🔍 Suche nach einem Mocktail:", placeholder="Gib einen Mocktailnamen ein...")
 
-# Funktion: Rezept anzeigen & Daten für Favoriten vorbereiten
-def display_recipe(drink):
-    st.image(drink["strDrinkThumb"], width=300)
-    st.markdown(f"### 🥂 {drink['strDrink']}")
-    st.markdown(f"**Glas:** {drink['strGlass']}")
-    st.markdown("#### 🧂 Zutaten:")
-
-    zutaten_liste = []
-    for i in range(1, 16):
-        zutat = drink.get(f"strIngredient{i}")
-        menge = drink.get(f"strMeasure{i}")
-        if zutat:
-            zutaten_liste.append({"name": zutat, "amount": menge if menge else ""})
-            st.write(f"- {menge if menge else ''} {zutat}")
-
-    anleitung = drink.get("strInstructionsDE") or drink.get("strInstructions") or "Keine Anleitung verfügbar."
-    st.markdown("#### 📖 Zubereitung:")
-    st.write(anleitung)
-
-    return {
-        "titel": drink["strDrink"],
-        "beschreibung": {
-            "ingredients": zutaten_liste,
-            "instructions": [anleitung]
-        }
-    }
-
-# Hauptfunktion
-def main():
-    st.title("🍹 Mocktail-Rezepte & Favoriten")
-
-    # Session-State initialisieren
-    if "favoriten" not in st.session_state:
-        st.session_state["favoriten"] = []
-
-    # Alle Mocktails abrufen
-    mocktails = get_mocktails()
-
-    # Eingabefeld zur Filterung
-    cocktail_name = st.text_input("🔍 Filtere nach einem Mocktail-Namen:")
-
-    # Gefilterte Mocktails
-    gefilterte_mocktails = [m for m in mocktails if cocktail_name.lower() in m["strDrink"].lower()] if cocktail_name else mocktails
-
-    if gefilterte_mocktails:
-        for mocktail in gefilterte_mocktails:
-            with st.expander(mocktail["strDrink"]):
-                drink = get_drink_details(mocktail["idDrink"])
-                if drink:
-                    rezept_objekt = display_recipe(drink)
-
-                    if st.button("⭐ Zu Favoriten hinzufügen", key=f"fav_{mocktail['idDrink']}"):
-                        favoriten = st.session_state["favoriten"]
-                        if not any(f["titel"] == rezept_objekt["titel"] for f in favoriten):
-                            favoriten.append(rezept_objekt)
-                            st.success(f"'{rezept_objekt['titel']}' wurde zu den Favoriten hinzugefügt!")
-                        else:
-                            st.warning(f"'{rezept_objekt['titel']}' ist bereits in den Favoriten.")
-    else:
-        st.error("❌ Kein Mocktail gefunden.")
-
-    # Favoriten anzeigen
-    if st.session_state["favoriten"]:
-        st.markdown("---")
-        st.markdown("## ⭐ Ihre Favoriten")
-        for fav in st.session_state["favoriten"]:
-            with st.expander(fav["titel"]):
-                st.markdown("### 🧂 Zutaten:")
-                for z in fav["beschreibung"]["ingredients"]:
-                    st.write(f"- {z['amount']} {z['name']}")
-                st.markdown("### 📖 Zubereitung:")
-                for step in fav["beschreibung"]["instructions"]:
-                    st.write(f"- {step}")
-
-if __name__ == "__main__":
-    main()
+# Mocktails suchen und anzeigen
+mocktails = suche_mocktails(suchbegriff)  # Suche mit oder ohne Suchbegriff
+if mocktails:
+    for mocktail in mocktails:
+        st.image(mocktail["strDrinkThumb"], width=150)
+        st.write(f"### {mocktail['strDrink']}")
+        
+        # Button zum Hinzufügen zu Favoriten
+        if st.button(f"Zu Favoriten hinzufügen: {mocktail['strDrink']}", key=f"add_fav_{mocktail['idDrink']}"):
+            # Überprüfen, ob der Mocktail bereits in den Favoriten ist
+            if not any(fav.get("idDrink") == mocktail["idDrink"] for fav in favoriten):
+                # Favorit hinzufügen
+                favoriten.append(mocktail)
+                favoriten_speichern(favoriten)  # Favoriten speichern
+                st.success(f"'{mocktail['strDrink']}' wurde zu den Favoriten hinzugefügt!")
+            else:
+                st.warning(f"'{mocktail['strDrink']}' ist bereits in den Favoriten.")
+else:
+    st.warning("Keine Mocktails gefunden. Bitte versuche es mit einem anderen Suchbegriff.")
