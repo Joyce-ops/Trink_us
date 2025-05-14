@@ -147,12 +147,6 @@ from utils.data_handler import save_drink_click
 # Dummy-Drinkliste, ersetze das ggf. mit deiner echten Logik
 cocktails = ["Amaretto Sour", "Mojito", "Gin Tonic"]
 
-st.title("🍹 Cocktail-Auswahl")
-
-if "user" not in st.session_state:
-    st.warning("Bitte zuerst einloggen.")
-    st.stop()
-
 user = st.session_state["user"]
 
 for drink in cocktails:
