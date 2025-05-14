@@ -6,6 +6,9 @@ import streamlit as st
 # Titel der Seite
 st.title("🍹 Mocktail Library")
 
+# Zusätzlicher Zeilenumbruch, um die Darstellung weiter unten zu starten
+st.markdown("<br>", unsafe_allow_html=True)
+
 # Pfad zur JSON-Datei für Favoriten
 pages_folder = os.path.dirname(os.path.abspath(__file__))
 favoriten_datei = os.path.join(pages_folder, "../favoriten.json")
@@ -55,7 +58,7 @@ def mocktail_details(mocktail_id):
         st.error("Fehler beim Abrufen der Mocktail-Details. Bitte versuche es später erneut.")
         return None
 
-# CSS für kleinere Schriftgröße der Buttons und Mocktail-Namen
+# CSS für größere Mocktail-Namen und zentrierte Rezepttexte
 st.markdown(
     """
     <style>
@@ -63,13 +66,23 @@ st.markdown(
         font-size: 12px; /* Kleinere Schriftgröße für Buttons */
     }
     .mocktail-name {
-        font-size: 14px; /* Kleinere Schriftgröße für Mocktail-Namen */
+        font-size: 22px; /* Größere Schriftgröße für Mocktail-Namen */
         margin-top: 5px;
         margin-bottom: 5px;
         text-align: center;
+        font-weight: bold;
+    }
+    .recipe-text {
+        font-size: 14px; /* Einheitliche Schriftgröße für Rezepttexte */
+        margin-top: 5px;
+        margin-bottom: 5px;
+        text-align: center; /* Zentrierte Texte */
     }
     .stTextInput > div > div:first-child {
         margin-bottom: 0px; /* Entfernt den Abstand zwischen Titel und Suchleiste */
+    }
+    .recipe-spacing {
+        margin-top: 20px; /* Abstand zwischen Bild und Rezept */
     }
     </style>
     """,
@@ -88,7 +101,7 @@ if mocktails:
 
     # Tabelle für die Mocktail-Vorschläge
     for idx, mocktail in enumerate(mocktails):
-        col1, col2, col3 = st.columns([1, 2, 2])  # Spaltenbreiten anpassen
+        col1, col2, col3 = st.columns([1, 3, 3])  # Spaltenbreiten anpassen
 
         with col1:
             st.image(mocktail["strDrinkThumb"], width=100)  # Bild in der ersten Spalte
@@ -100,18 +113,17 @@ if mocktails:
             if st.button("Rezept anzeigen", key=f"details_{mocktail['idDrink']}"):
                 details = mocktail_details(mocktail["idDrink"])
                 if details:
-                    # Rezept in voller Breite anzeigen
-                    st.markdown("---")  # Trennlinie
-                    st.write(f"### Rezept für: {details['strDrink']}")
-                    st.write("**Zutaten:**")
-                    for i in range(1, 16):  # Es gibt bis zu 15 Zutaten in der API
-                        ingredient = details.get(f"strIngredient{i}")
-                        measure = details.get(f"strMeasure{i}")
-                        if ingredient:
-                            st.write(f"- {measure or ''} {ingredient}")
-                    st.write("**Zubereitung:**")
-                    st.write(details.get("strInstructions", "Keine Zubereitungsanweisungen verfügbar."))
-                    st.markdown("---")  # Trennlinie
+                    # Rezept in der zweiten Spalte anzeigen
+                    with col2:
+                        st.markdown("<div class='recipe-spacing'></div>", unsafe_allow_html=True)  # Abstand einfügen
+                        st.markdown("<p class='recipe-text'><b>Zutaten:</b></p>", unsafe_allow_html=True)
+                        for i in range(1, 16):  # Es gibt bis zu 15 Zutaten in der API
+                            ingredient = details.get(f"strIngredient{i}")
+                            measure = details.get(f"strMeasure{i}")
+                            if ingredient:
+                                st.markdown(f"<p class='recipe-text'>- {measure or ''} {ingredient}</p>", unsafe_allow_html=True)
+                        st.markdown("<p class='recipe-text'><b>Zubereitung:</b></p>", unsafe_allow_html=True)
+                        st.markdown(f"<p class='recipe-text'>{details.get('strInstructions', 'Keine Zubereitungsanweisungen verfügbar.')}</p>", unsafe_allow_html=True)
             if st.button("Zu Favoriten hinzufügen", key=f"add_fav_{mocktail['idDrink']}"):
                 if not any(fav.get("idDrink") == mocktail["idDrink"] for fav in favoriten):
                     favoriten.append(mocktail)
