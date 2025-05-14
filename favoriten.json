@@ -215,5 +215,10 @@
         "strImageAttribution": null,
         "strCreativeCommonsConfirmed": "No",
         "dateModified": "2017-09-02 17:06:02"
+    },
+    {
+        "strDrink": "Apple Berry Smoothie",
+        "strDrinkThumb": "https://www.thecocktaildb.com/images/media/drink/xwqvur1468876473.jpg",
+        "idDrink": "12710"
     }
 ]

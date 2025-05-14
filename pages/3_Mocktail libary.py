@@ -3,13 +3,13 @@ import json
 import requests
 import streamlit as st
 
-# Funktion: CSS für einen weich überlagerten und dunkleren Hintergrund
+# Funktion: CSS für einen stark überlagerten und dunkleren Hintergrund
 def set_faded_background(image_url):
     st.markdown(
         f"""
         <style>
         .stApp {{
-            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), /* Dunkler Overlay */
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), /* Dunkler Overlay */
                         url("{image_url}");
             background-size: cover;
             background-attachment: fixed;
@@ -24,11 +24,9 @@ def set_faded_background(image_url):
             box-shadow: 0 0 10px rgba(0,0,0,0.2);
         }}
 
-        /* Stil für die Suchleiste */
-        .search-label {{
-            color: #333333; /* Dunklere Schriftfarbe */
-            font-size: 1.1rem; /* Leicht größere Schriftgröße */
-            font-weight: 500; /* Leicht dickere Schrift */
+        /* Text auf der gesamten Seite weiß */
+        .stMarkdown, .stTitle, .stInfo, .stText, .stCaption, .stHeader, .stSubheader {{
+            color: #ffffff !important; /* Weiße Schriftfarbe */
         }}
         </style>
         """,
