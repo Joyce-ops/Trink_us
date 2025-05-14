@@ -6,6 +6,37 @@ LoginManager().go_to_login('Start.py')
 import streamlit as st
 import requests
 
+# Funktion: CSS für einen weich überlagerten Hintergrund
+def set_faded_background(image_url):
+    st.markdown(
+        f"""
+        <style>
+        .stApp {{
+            background: linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)),
+                        url("{image_url}");
+            background-size: cover;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-position: center;
+        }}
+
+        .main > div {{
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+# Dein neues Hintergrundbild (Wetter)
+image_url = "https://img.freepik.com/premium-photo/sky-different-weather-collage-generative-ai_169016-36937.jpg"
+
+# Hintergrund anwenden
+set_faded_background(image_url)
+
 def get_weather(city):
     try:
         url = f"https://wttr.in/{city}?format=j1"

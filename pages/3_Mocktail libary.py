@@ -3,6 +3,44 @@ import json
 import requests
 import streamlit as st
 
+# Funktion: CSS für einen weich überlagerten Hintergrund
+def set_faded_background(image_url):
+    st.markdown(
+        f"""
+        <style>
+        .stApp {{
+            background: linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)),
+                        url("{image_url}");
+            background-size: cover;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-position: center;
+        }}
+
+        .main > div {{
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }}
+
+        /* Stil für die Suchleiste */
+        .search-label {{
+            color: #333333; /* Dunklere Schriftfarbe */
+            font-size: 1.1rem; /* Leicht größere Schriftgröße */
+            font-weight: 500; /* Leicht dickere Schrift */
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+# Dein neues Hintergrundbild (Mocktails)
+image_url = "https://img.freepik.com/premium-photo/selection-colorful-mocktails_941600-17041.jpg"
+
+# Hintergrund anwenden
+set_faded_background(image_url)
+
 # Titel der Seite
 st.title("🍹 Mocktail Library")
 
@@ -48,7 +86,8 @@ def suche_mocktails(suchbegriff=None):
         return []
 
 # Suchleiste für Mocktails
-suchbegriff = st.text_input("🔍 Suche nach einem Mocktail:", placeholder="Gib einen Mocktailnamen ein...")
+st.markdown('<label class="search-label">🔍 Suche nach einem Mocktail:</label>', unsafe_allow_html=True)
+suchbegriff = st.text_input("", placeholder="Gib einen Mocktailnamen ein...")
 
 # Mocktails suchen und anzeigen
 mocktails = suche_mocktails(suchbegriff)  # Suche mit oder ohne Suchbegriff

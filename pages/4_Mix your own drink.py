@@ -5,6 +5,37 @@ from pathlib import Path
 # ====== App Layout und Titel ======
 st.set_page_config(page_title="Cocktail Creator", page_icon="🍹", layout="centered")
 
+# Funktion: CSS für einen weich überlagerten Hintergrund
+def set_faded_background(image_url):
+    st.markdown(
+        f"""
+        <style>
+        .stApp {{
+            background: linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)),
+                        url("{image_url}");
+            background-size: cover;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-position: center;
+        }}
+
+        .main > div {{
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+# Dein neues Hintergrundbild (Cocktail-Mixer)
+image_url = "https://www.azuniatequila.com/wp-content/uploads/2020/01/Bar-Tools-Set-1024x713.jpg"
+
+# Hintergrund anwenden
+set_faded_background(image_url)
+
 # ====== Start Login Block ======
 from utils.login_manager import LoginManager
 LoginManager().go_to_login('Start.py') 
