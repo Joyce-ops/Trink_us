@@ -3,42 +3,6 @@ import json
 import requests
 import streamlit as st
 
-# Funktion: CSS für einen stark überlagerten und dunkleren Hintergrund
-def set_faded_background(image_url):
-    st.markdown(
-        f"""
-        <style>
-        .stApp {{
-            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), /* Dunkler Overlay */
-                        url("{image_url}");
-            background-size: cover;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-            background-position: center;
-        }}
-
-        .main > div {{
-            background-color: rgba(255, 255, 255, 0.85);
-            padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
-        }}
-
-        /* Text auf der gesamten Seite weiß */
-        .stMarkdown, .stTitle, .stInfo, .stText, .stCaption, .stHeader, .stSubheader {{
-            color: #ffffff !important; /* Weiße Schriftfarbe */
-        }}
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-# Dein aktuelles Hintergrundbild (Mocktails)
-image_url = "https://img.freepik.com/premium-photo/selection-colorful-mocktails_941600-17041.jpg"
-
-# Hintergrund anwenden
-set_faded_background(image_url)
-
 # Titel der Seite
 st.title("🍹 Mocktail Library")
 
@@ -65,9 +29,6 @@ def favoriten_speichern(favoriten):
 # Favoriten initialisieren
 favoriten = favoriten_laden()
 
-# Validierung der Favoriten-Liste
-favoriten = [fav for fav in favoriten if "idDrink" in fav]
-
 # Funktion: Mocktails aus der API suchen
 def suche_mocktails(suchbegriff=None):
     url = f"https://www.thecocktaildb.com/api/json/v1/1/filter.php?a=Non_Alcoholic"
@@ -83,6 +44,35 @@ def suche_mocktails(suchbegriff=None):
         st.error("Fehler beim Abrufen der Mocktails. Bitte versuche es später erneut.")
         return []
 
+# Funktion: Details eines Mocktails abrufen
+def mocktail_details(mocktail_id):
+    url = f"https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i={mocktail_id}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        return data.get("drinks", [])[0]  # Gib das erste Ergebnis zurück
+    else:
+        st.error("Fehler beim Abrufen der Mocktail-Details. Bitte versuche es später erneut.")
+        return None
+
+# CSS für kleinere Schriftgröße der Buttons und Mocktail-Namen
+st.markdown(
+    """
+    <style>
+    div[data-testid="stButton"] > button {
+        font-size: 12px; /* Kleinere Schriftgröße für Buttons */
+    }
+    .mocktail-name {
+        font-size: 14px; /* Kleinere Schriftgröße für Mocktail-Namen */
+        margin-top: 5px;
+        margin-bottom: 5px;
+        text-align: center;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 # Suchleiste für Mocktails
 st.markdown('<label class="search-label">🔍 Suche nach einem Mocktail:</label>', unsafe_allow_html=True)
 suchbegriff = st.text_input("", placeholder="Gib einen Mocktailnamen ein...")
@@ -90,19 +80,41 @@ suchbegriff = st.text_input("", placeholder="Gib einen Mocktailnamen ein...")
 # Mocktails suchen und anzeigen
 mocktails = suche_mocktails(suchbegriff)  # Suche mit oder ohne Suchbegriff
 if mocktails:
-    for mocktail in mocktails:
-        st.image(mocktail["strDrinkThumb"], width=150)
-        st.write(f"### {mocktail['strDrink']}")
+    # Tabelle für die Mocktail-Vorschläge
+    for idx, mocktail in enumerate(mocktails):
+        col1, col2, col3 = st.columns([1, 2, 2])  # Spaltenbreiten anpassen
+
+        with col1:
+            st.image(mocktail["strDrinkThumb"], width=100)  # Bild in der ersten Spalte
+
+        with col2:
+            st.markdown(f"<p class='mocktail-name'>{mocktail['strDrink']}</p>", unsafe_allow_html=True)
+
+        with col3:
+            if st.button("Rezept anzeigen", key=f"details_{mocktail['idDrink']}"):
+                details = mocktail_details(mocktail["idDrink"])
+                if details:
+                    # Rezept in voller Breite anzeigen
+                    st.markdown("---")  # Trennlinie
+                    st.write(f"### Rezept für: {details['strDrink']}")
+                    st.write("**Zutaten:**")
+                    for i in range(1, 16):  # Es gibt bis zu 15 Zutaten in der API
+                        ingredient = details.get(f"strIngredient{i}")
+                        measure = details.get(f"strMeasure{i}")
+                        if ingredient:
+                            st.write(f"- {measure or ''} {ingredient}")
+                    st.write("**Zubereitung:**")
+                    st.write(details.get("strInstructions", "Keine Zubereitungsanweisungen verfügbar."))
+                    st.markdown("---")  # Trennlinie
+            if st.button("Zu Favoriten hinzufügen", key=f"add_fav_{mocktail['idDrink']}"):
+                if not any(fav.get("idDrink") == mocktail["idDrink"] for fav in favoriten):
+                    favoriten.append(mocktail)
+                    favoriten_speichern(favoriten)
+                    st.success(f"'{mocktail['strDrink']}' wurde zu den Favoriten hinzugefügt!")
+                else:
+                    st.warning(f"'{mocktail['strDrink']}' ist bereits in den Favoriten.")
         
-        # Button zum Hinzufügen zu Favoriten
-        if st.button(f"Zu Favoriten hinzufügen: {mocktail['strDrink']}", key=f"add_fav_{mocktail['idDrink']}"):
-            # Überprüfen, ob der Mocktail bereits in den Favoriten ist
-            if not any(fav.get("idDrink") == mocktail["idDrink"] for fav in favoriten):
-                # Favorit hinzufügen
-                favoriten.append(mocktail)
-                favoriten_speichern(favoriten)  # Favoriten speichern
-                st.success(f"'{mocktail['strDrink']}' wurde zu den Favoriten hinzugefügt!")
-            else:
-                st.warning(f"'{mocktail['strDrink']}' ist bereits in den Favoriten.")
+        # Horizontale Linie nach jedem Drink
+        st.markdown("---")
 else:
     st.warning("Keine Mocktails gefunden. Bitte versuche es mit einem anderen Suchbegriff.")
