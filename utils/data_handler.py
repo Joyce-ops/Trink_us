@@ -170,4 +170,30 @@ def save_drink_click(user, drink):
         new_entry.to_csv(CLICK_FILE, mode="a", index=False, header=False)
     else:
         new_entry.to_csv(CLICK_FILE, index=False)
+
+#Statistik
+# utils/data_handler.py
+
+import pandas as pd
+from datetime import datetime
+import os
+
+CLICK_FILE = "user_clicks.csv"
+
+def save_drink_click(user, drink):
+    new_entry = {
+        "user": user,
+        "drink": drink,
+        "timestamp": datetime.now()
+    }
+
+    # Lade vorhandene Daten oder erstelle eine neue DataFrame
+    if os.path.exists(CLICK_FILE):
+        df = pd.read_csv(CLICK_FILE)
+        df = pd.concat([df, pd.DataFrame([new_entry])], ignore_index=True)
+    else:
+        df = pd.DataFrame([new_entry])
+
+    # Speichere die aktualisierten Daten
+    df.to_csv(CLICK_FILE, index=False)
        

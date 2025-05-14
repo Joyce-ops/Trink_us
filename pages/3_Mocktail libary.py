@@ -138,5 +138,26 @@ else:
     st.warning("Keine Mocktails gefunden. Bitte versuche es mit einem anderen Suchbegriff.")
 from utils.data_handler import save_drink_click
 
-# Bei Klick auf Drink:
-save_drink_click(st.session_state["user"], "Amaretto Sour")
+
+# Statistik
+
+import streamlit as st
+from utils.data_handler import save_drink_click
+
+# Dummy-Drinkliste, ersetze das ggf. mit deiner echten Logik
+cocktails = ["Amaretto Sour", "Mojito", "Gin Tonic"]
+
+st.title("🍹 Cocktail-Auswahl")
+
+if "user" not in st.session_state:
+    st.warning("Bitte zuerst einloggen.")
+    st.stop()
+
+user = st.session_state["user"]
+
+for drink in cocktails:
+    if st.button(drink):
+        save_drink_click(user, drink)
+        st.success(f"{drink} wurde zu deiner Statistik hinzugefügt!")
+
+
