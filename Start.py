@@ -13,7 +13,7 @@ def set_faded_background_and_text(image_url):
         f"""
         <style>
         .stApp {{
-            background: linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)),
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), /* Dunkler Overlay */
                         url("{image_url}");
             background-size: cover;
             background-attachment: fixed;
@@ -29,10 +29,16 @@ def set_faded_background_and_text(image_url):
             box-shadow: 0 0 10px rgba(0,0,0,0.2);
         }}
 
-        /* Text dunkler und leicht dicker */
-        .stMarkdown, .stTitle, .stInfo {{
-            color: #333333; /* Dunklere Schriftfarbe */
-            font-weight: 500; /* Leicht dickere Schrift */
+        /* Text auf der gesamten Seite weiß */
+        .stMarkdown, .stTitle, .stInfo, .stText, .stCaption, .stHeader, .stSubheader {{
+            color: #ffffff !important; /* Weiße Schriftfarbe */
+        }}
+
+        /* Hinweisblock transparent rot hinterlegen */
+        div[data-testid="stAlert"] {{
+            background-color: rgba(255, 0, 0, 0.2) !important; /* Transparentes Rot */
+            border-left: 5px solid #ff0000 !important; /* Dunkelroter Rand */
+            color: #ffffff !important; /* Weiße Schrift im Hinweisblock */
         }}
         </style>
         """,
@@ -79,7 +85,7 @@ st.markdown("Willkommen bei Trink us. Bei uns findest du zahlreiche Cocktails, d
 
 # Hinweis zum Alkoholkonsum
 st.info("""
-##### **ℹ️ Hinweis zum Alkoholkonsum: ℹ️**  
+##### **❗Hinweis zum Alkoholkonsum:❗**  
 Diese Cocktailrezepte enthalten alkoholische Zutaten.  
 Wenn du noch nicht volljährig bist, empfehlen wir dir, die Rezepte ohne Alkohol zuzubereiten als leckere Mocktail-Variante!  
 Genieße verantwortungsvoll und altersgerecht. 🍸✨
