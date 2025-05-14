@@ -6,7 +6,7 @@ import numpy as np
 
 import streamlit as st
 
-# Funktion: CSS für einen weich überlagerten Hintergrund
+# Hintergrund
 def set_faded_background(image_url):
     st.markdown(
         f"""
@@ -31,7 +31,7 @@ def set_faded_background(image_url):
         unsafe_allow_html=True
     )
 
-# Dein neues Hintergrundbild (Mocktails)
+# Dein neues Hintergrundbild
 image_url = "https://wallpapercave.com/wp/wp2361388.jpg"
 
 # Hintergrund anwenden
@@ -54,7 +54,7 @@ def add_drink(drink_name):
         st.session_state["drink_counts"][drink_name] = 1
 
 # Drink-Eingabe
-drink_input = st.text_input("Wie heißt der Drink in deiner Hand ?")
+drink_input = st.text_input("Wie heisst der Drink in deiner Hand ?")
 
 # Button zum Hinzufügen aus Eingabefeld
 if drink_input:
