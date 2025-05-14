@@ -73,8 +73,8 @@ if st.session_state["drink_counts"]:
     drinks = list(st.session_state["drink_counts"].keys())
     counts = list(st.session_state["drink_counts"].values())
 
-    # Farben 
-    cmap = cm.get_cmap("Set3", len(drinks))  # oder "tab10", "Pastel1", "Accent"
+    # Farben: "Set3" – freundlich und bunt/ "tab10" – klar und kontrastreich/ "Pastel1" – zart & hell/ "Accent" – lebendig
+    cmap = cm.get_cmap("Accent", len(drinks))  # oder "tab10", "Pastel1", "Accent"
     colors = [cmap(i) for i in range(len(drinks))]
 
     fig, ax = plt.subplots(figsize=(10, 6))
