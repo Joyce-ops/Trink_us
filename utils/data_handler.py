@@ -154,3 +154,20 @@ class DataHandler:
             self.write_binary(relative_path, content)
         else:
             raise ValueError(f"Unsupported content type for extension {ext}")
+        
+
+import pandas as pd
+from datetime import datetime
+import os
+
+CLICK_FILE = "user_clicks.csv"
+
+def save_drink_click(user, drink):
+    now = datetime.now()
+    new_entry = pd.DataFrame([[user, drink, now]], columns=["user", "drink", "timestamp"])
+
+    if os.path.exists(CLICK_FILE):
+        new_entry.to_csv(CLICK_FILE, mode="a", index=False, header=False)
+    else:
+        new_entry.to_csv(CLICK_FILE, index=False)
+       

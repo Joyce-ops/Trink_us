@@ -136,3 +136,7 @@ if mocktails:
         st.markdown("---")
 else:
     st.warning("Keine Mocktails gefunden. Bitte versuche es mit einem anderen Suchbegriff.")
+from utils.data_handler import save_drink_click
+
+# Bei Klick auf Drink:
+save_drink_click(st.session_state["user"], "Amaretto Sour")

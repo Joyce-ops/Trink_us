@@ -100,3 +100,7 @@ if suchbegriff:
         st.warning("Keine Cocktails gefunden. Bitte versuche es mit einem anderen Suchbegriff.")
 else:
     st.info("Gib einen Suchbegriff ein, um Cocktails zu finden.")
+from utils.data_handler import save_drink_click
+
+# Bei Klick auf Drink:
+save_drink_click(st.session_state["user"], "Amaretto Sour")
