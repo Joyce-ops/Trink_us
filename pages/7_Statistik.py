@@ -1,14 +1,21 @@
-import json
 import matplotlib.pyplot as plt
 from collections import defaultdict
+from Cocktail_library import get_cocktails  # Importiere die Cocktails aus der Cocktail-Bibliothek
+from Mocktail_library import get_mocktails  # Importiere die Mocktails aus der Mocktail-Bibliothek
 
-# Funktion zum Laden der Drinks aus JSON-Dateien
-def load_drinks(file_paths):
+# Funktion zum Laden der Drinks aus den Bibliotheken
+def load_drinks():
     drinks = {}
-    for file_path in file_paths:
-        with open(file_path, 'r', encoding='utf-8') as file:
-            data = json.load(file)
-            drinks[data['name']] = 0  # Initialisiere Klicks mit 0
+    # Cocktails laden
+    cocktails = get_cocktails()
+    for cocktail in cocktails:
+        drinks[cocktail['name']] = 0  # Initialisiere Klicks mit 0
+
+    # Mocktails laden
+    mocktails = get_mocktails()
+    for mocktail in mocktails:
+        drinks[mocktail['name']] = 0  # Initialisiere Klicks mit 0
+
     return drinks
 
 # Funktion zum Simulieren eines Klicks auf einen Drink
@@ -32,12 +39,8 @@ def plot_statistics(drink_clicks):
 
 # Hauptprogramm
 if __name__ == "__main__":
-    # Pfade zu den JSON-Dateien der Cocktails und Mocktails
-    cocktail_file = r'c:\Users\mcqul\OneDrive - ZHAW\Desktop\BMLD\2. Semester\Informatik 2\Übungen\Trinkuuus\Trink_us\Trink_us\drinks\Amaretto_Sour\rezept.json'
-    mocktail_file = r'c:\Users\mcqul\OneDrive - ZHAW\Desktop\BMLD\2. Semester\Informatik 2\Übungen\Trinkuuus\Trink_us\Trink_us\drinks\Mocktail\rezept.json'
-
     # Drinks laden
-    drink_clicks = load_drinks([cocktail_file, mocktail_file])
+    drink_clicks = load_drinks()
 
     # Simuliere Klicks
     click_drink("Amaretto Sour", drink_clicks)
