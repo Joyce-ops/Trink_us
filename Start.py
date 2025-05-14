@@ -37,7 +37,7 @@ def set_faded_background_and_text(image_url):
         /* Hinweisblock transparent rot hinterlegen */
         div[data-testid="stAlert"] {{
             background-color: rgba(255, 0, 0, 0.2) !important; /* Transparentes Rot */
-            border-left: 5px solid #ff0000 !important; /* Dunkelroter Rand */
+            border-left: none !important; /* Kein Rand */
             color: #ffffff !important; /* Weiße Schrift im Hinweisblock */
         }}
         </style>
