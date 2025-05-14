@@ -6,6 +6,19 @@ import streamlit as st
 # Titel der Seite
 st.title("🍹 Cocktail Library")
 
+# CSS für linksbündigen Text in Buttons
+st.markdown(
+    """
+    <style>
+    div[data-testid="stButton"] > button {
+        text-align: left; /* Text im Button linksbündig */
+        justify-content: flex-start; /* Button-Inhalt linksbündig */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 # Pfad zur JSON-Datei für Favoriten
 pages_folder = os.path.dirname(os.path.abspath(__file__))
 favoriten_datei = os.path.join(pages_folder, "../favoriten.json")
@@ -51,19 +64,38 @@ if suchbegriff:
     cocktails = suche_cocktails(suchbegriff)
     if cocktails:
         for cocktail in cocktails:
-            st.image(cocktail["strDrinkThumb"], width=150)
-            st.write(f"### {cocktail['strDrink']}")
-            
-            # Button zum Hinzufügen zu Favoriten
-            if st.button(f"Zu Favoriten hinzufügen: {cocktail['strDrink']}", key=f"add_fav_{cocktail['idDrink']}"):
-                # Überprüfen, ob der Cocktail bereits in den Favoriten ist
-                if not any(fav.get("idDrink") == cocktail["idDrink"] for fav in favoriten):
-                    # Favorit hinzufügen
-                    favoriten.append(cocktail)
-                    favoriten_speichern(favoriten)  # Favoriten speichern
-                    st.success(f"'{cocktail['strDrink']}' wurde zu den Favoriten hinzugefügt!")
-                else:
-                    st.warning(f"'{cocktail['strDrink']}' ist bereits in den Favoriten.")
+            # Zeige den Cocktailnamen als zeilenlange Schaltfläche
+            if st.button(f"{cocktail['strDrink']}", key=f"show_{cocktail['idDrink']}", use_container_width=True):
+                # Zeige den Namen linksbündig über dem Bild
+                st.markdown(f"### {cocktail['strDrink']}", unsafe_allow_html=True)
+                st.image(cocktail["strDrinkThumb"], width=150)
+                
+                # Zutaten anzeigen
+                st.write("**Zutaten:**")
+                for i in range(1, 16):  # Es gibt bis zu 15 Zutaten in der API
+                    ingredient = cocktail.get(f"strIngredient{i}")
+                    measure = cocktail.get(f"strMeasure{i}")
+                    if ingredient:
+                        st.write(f"- {measure or ''} {ingredient}")
+                
+                # Zubereitung in nummerierten Schritten anzeigen
+                st.write("**Zubereitung:**")
+                instructions = cocktail.get("strInstructions", "Keine Zubereitungsanweisungen verfügbar.")
+                steps = instructions.split(". ")  # Teile die Anweisungen in Schritte auf
+                for idx, step in enumerate(steps, start=1):
+                    if step.strip():  # Ignoriere leere Schritte
+                        st.write(f"{idx}. {step.strip()}")
+
+                # Button zum Hinzufügen zu Favoriten
+                if st.button(f"Zu Favoriten hinzufügen: {cocktail['strDrink']}", key=f"add_fav_{cocktail['idDrink']}"):
+                    # Überprüfen, ob der Cocktail bereits in den Favoriten ist
+                    if not any(fav.get("idDrink") == cocktail["idDrink"] for fav in favoriten):
+                        # Favorit hinzufügen
+                        favoriten.append(cocktail)
+                        favoriten_speichern(favoriten)  # Favoriten speichern
+                        st.success(f"'{cocktail['strDrink']}' wurde zu den Favoriten hinzugefügt!")
+                    else:
+                        st.warning(f"'{cocktail['strDrink']}' ist bereits in den Favoriten.")
     else:
         st.warning("Keine Cocktails gefunden. Bitte versuche es mit einem anderen Suchbegriff.")
 else:
