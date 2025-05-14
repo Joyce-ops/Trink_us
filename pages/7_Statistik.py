@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import random
 
-st.title("🥤 Deine persönliche Drink-Statistik")
+st.title("Mein persönliche Drink-Counter")
 
 # Session-State initialisieren
 if "drink_counts" not in st.session_state:
@@ -20,7 +20,7 @@ def add_drink(drink_name):
         st.session_state["drink_counts"][drink_name] = 1
 
 # Drink-Eingabe
-drink_input = st.text_input("Gib einen Drink ein, den du konsumiert hast:")
+drink_input = st.text_input("Gib einen Drink ein, den du am kkonsumieren bist:")
 
 # Button zum Hinzufügen aus dem Eingabefeld
 if drink_input:
@@ -31,7 +31,7 @@ if drink_input:
 if st.session_state["drink_counts"]:
     st.markdown("### Bereits hinzugefügte Drinks:")
     for drink in st.session_state["drink_counts"]:
-        if st.button(f"➕ {drink} erneut hinzufügen"):
+        if st.button(f"➕ {drink}"):
             add_drink(drink)
 
 # Säulendiagramm anzeigen
@@ -46,9 +46,9 @@ if st.session_state["drink_counts"]:
     fig, ax = plt.subplots(figsize=(10, 6))
     bars = ax.bar(drinks, counts, color=colors)
 
-    ax.set_xlabel("Drinks")
-    ax.set_ylabel("Anzahl")
-    ax.set_title("Drink-Häufigkeit")
+    ax.set_xlabel("")
+    ax.set_ylabel("")
+    ax.set_title("")
     ax.set_yticks(range(0, max(counts) + 1))  # Nur ganze Zahlen auf der Y-Achse
     plt.xticks(rotation=45)
     st.pyplot(fig)
