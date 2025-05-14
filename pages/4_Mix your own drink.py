@@ -28,25 +28,13 @@ st.title("🍸 Dein eigener Cocktail-Mixer")
 # Standardzutaten
 default_ingredients = [
     "Limettensaft", "Zitronensaft", "Orangensaft", "Ananassaft",
-    "Cola", "Tonic Water", "Soda", "Zuckersirup",
+    "Cola", "Tonic Water", "Soda", "Zuckersirup", "Salz",
+    "Grenadinesirup", "Zimt", "Kardamom", "Pfeffer", "Vanille", "zucker",
+    "Kokosnuss", "Erdbeeren", "Himbeeren", "Blaubeeren", "Himbeersirup", "wassermelone",
+    "Kiwi", "Pfirsich", "Mango", "Brombeeren", "Ananas", "Kirschen",
     "Grenadine", "Minze", "Eiswürfel", "Ingwer", "Basilikum"
 ]
 
-# Session State für eigene Zutaten
-if "custom_ingredients" not in st.session_state:
-    st.session_state.custom_ingredients = []
-
-# Eigene Zutat hinzufügen (außerhalb des Formulars)
-st.markdown("##### Eigene Zutat hinzufügen")
-custom_input = st.text_input("Eigene Zutat:", placeholder="z. B. Lavendel, Matcha...")
-if st.button("➕ Hinzufügen"):
-    if custom_input and custom_input not in st.session_state.custom_ingredients:
-        st.session_state.custom_ingredients.append(custom_input)
-        st.success(f"'{custom_input}' wurde hinzugefügt!")
-    elif custom_input in st.session_state.custom_ingredients:
-        st.warning("Diese Zutat wurde bereits hinzugefügt.")
-    else:
-        st.warning("Bitte gib eine gültige Zutat ein.")
 
 # Formular für die Cocktail-Gestaltung
 with st.form("cocktail_form"):
