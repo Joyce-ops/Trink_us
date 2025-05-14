@@ -5,13 +5,13 @@ from pathlib import Path
 # ====== App Layout und Titel ======
 st.set_page_config(page_title="Cocktail Creator", page_icon="🍹", layout="centered")
 
-# Funktion: CSS für einen weich überlagerten Hintergrund
+# Funktion: CSS für einen stark überlagerten Hintergrund
 def set_faded_background(image_url):
     st.markdown(
         f"""
         <style>
         .stApp {{
-            background: linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)),
+            background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), /* Dunkler Overlay */
                         url("{image_url}");
             background-size: cover;
             background-attachment: fixed;
@@ -24,6 +24,11 @@ def set_faded_background(image_url):
             padding: 2rem;
             border-radius: 1rem;
             box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }}
+
+        /* Text auf der gesamten Seite weiß */
+        .stMarkdown, .stTitle, .stInfo, .stText, .stCaption, .stHeader, .stSubheader {{
+            color: #ffffff !important; /* Weiße Schriftfarbe */
         }}
         </style>
         """,
@@ -69,13 +74,13 @@ base = st.selectbox("Wähle deine Basis-Spirituose:", [
     "Rum", "Wodka", "Gin", "Tequila", "Whiskey", "Likör", "Ohne Alkohol"
 ])
 
-st.divider()
-
-# ====== Zutaten-Auswahl ======
-st.subheader("Zutaten auswählen oder eigene hinzufügen")
 
 default_ingredients = [
-    "Limettensaft", "Zitronensaft", "Orangensaft", "Ananassaft",
+    "Limettensaft", "Zitronensaft", "Orangensaft", "Ananassaft", "Salz",
+    "Zucker", "Agavendicksaft", "Zitronenlimonade", "Tonic Water", "Sprite",
+    "Bitter Lemon", "Grenadine", "Himbeersirup", "Kokosnusscreme", "Kokosmilch",
+    "Erdbeeren", "Himbeeren", "Blaubeeren", "Ananas", "Mango", "Kiwi", "Banane",
+    "Pfirsich", "Melone", "Trauben", "Kirschen", "Zimt", "Vanille", "Ingwer",   
     "Cola", "Tonic Water", "Soda", "Zuckersirup",
     "Grenadine", "Minze", "Eiswürfel", "Ingwer", "Basilikum"
 ]
@@ -101,7 +106,6 @@ with st.form("Eigene Zutat hinzufügen"):
         else:
             st.warning("Bitte gib eine gültige Zutat ein.")
 
-st.divider()
 
 # ====== Deko wählen ======
 decoration = st.selectbox("Wähle eine Dekoration:", [
