@@ -1,50 +1,45 @@
 import streamlit as st
-import pandas as pd
 import matplotlib.pyplot as plt
-import os
 
-# Pfad zur Datei mit den Klickdaten
-CLICK_FILE = "user_clicks.csv"
+st.title("🥤 Deine persönliche Drink-Statistik")
 
-# Titel
-st.title("📊 Deine persönliche Drink-Statistik")
+# Session-State initialisieren
+if "drink_counts" not in st.session_state:
+    st.session_state["drink_counts"] = {}
 
-# Überprüfe, ob der Benutzer eingeloggt ist
-if "user" not in st.session_state:
-    st.warning("Bitte zuerst einloggen.")
-    st.stop()
+# Funktion zum Hinzufügen eines Drinks
+def add_drink(drink_name):
+    if drink_name in st.session_state["drink_counts"]:
+        st.session_state["drink_counts"][drink_name] += 1
+    else:
+        st.session_state["drink_counts"][drink_name] = 1
 
-# Aktuellen Benutzer aus dem Session State holen
-user = st.session_state["user"]
+# Drink-Eingabe
+drink_input = st.text_input("Gib einen Drink ein, den du konsumiert hast:")
 
-# Prüfe, ob die Klickdaten existieren
-if not os.path.exists(CLICK_FILE):
-    st.info("Noch keine Klickdaten vorhanden.")
-    st.stop()
+# Button zum Hinzufügen aus dem Eingabefeld
+if drink_input:
+    if st.button("✅ Drink hinzufügen"):
+        add_drink(drink_input.strip().title())
 
-# Lade die CSV-Datei mit Klickdaten
-df = pd.read_csv(CLICK_FILE, parse_dates=["timestamp"])
+# Buttons für bereits vorhandene Drinks
+if st.session_state["drink_counts"]:
+    st.markdown("### Bereits hinzugefügte Drinks:")
+    for drink in st.session_state["drink_counts"]:
+        if st.button(f"➕ {drink} erneut hinzufügen"):
+            add_drink(drink)
 
-# Filtere die Daten für den eingeloggten Benutzer
-user_df = df[df["user"] == user]
+# Säulendiagramm anzeigen
+if st.session_state["drink_counts"]:
+    drinks = list(st.session_state["drink_counts"].keys())
+    counts = list(st.session_state["drink_counts"].values())
 
-# Zeige Info, wenn der Benutzer keine Klicks hat
-if user_df.empty:
-    st.info("Du hast noch keine Drinks geklickt.")
-    st.stop()
-
-# Gruppiere nach Drink und zähle Klicks
-drink_stats = user_df.groupby("drink").size().sort_values(ascending=False)
-
-# Diagramm erstellen
-fig, ax = plt.subplots(figsize=(10, 6))
-drink_stats.plot(kind="bar", color="skyblue", ax=ax)
-
-# Diagramm beschriften
-ax.set_title("Deine beliebtesten Drinks")
-ax.set_xlabel("Drink")
-ax.set_ylabel("Klicks")
-plt.xticks(rotation=45)
-
-# Diagramm in Streamlit anzeigen
-st.pyplot(fig)
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.bar(drinks, counts, color='skyblue')
+    ax.set_xlabel("Drinks")
+    ax.set_ylabel("Anzahl")
+    ax.set_title("Drink-Häufigkeit")
+    plt.xticks(rotation=45)
+    st.pyplot(fig)
+else:
+    st.info("Noch keine Drinks hinzugefügt.")

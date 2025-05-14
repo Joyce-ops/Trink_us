@@ -139,19 +139,6 @@ else:
 from utils.data_handler import save_drink_click
 
 
-# Statistik
 
-import streamlit as st
-from utils.data_handler import save_drink_click
-
-# Dummy-Drinkliste, ersetze das ggf. mit deiner echten Logik
-cocktails = ["Amaretto Sour", "Mojito", "Gin Tonic"]
-
-user = st.session_state["user"]
-
-for drink in cocktails:
-    if st.button(drink):
-        save_drink_click(user, drink)
-        st.success(f"{drink} wurde zu deiner Statistik hinzugefügt!")
 
 
