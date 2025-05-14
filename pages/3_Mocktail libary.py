@@ -3,13 +3,13 @@ import json
 import requests
 import streamlit as st
 
-# Funktion: CSS für einen weich überlagerten Hintergrund
+# Funktion: CSS für einen weich überlagerten und dunkleren Hintergrund
 def set_faded_background(image_url):
     st.markdown(
         f"""
         <style>
         .stApp {{
-            background: linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)),
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), /* Dunkler Overlay */
                         url("{image_url}");
             background-size: cover;
             background-attachment: fixed;
@@ -35,7 +35,7 @@ def set_faded_background(image_url):
         unsafe_allow_html=True
     )
 
-# Dein neues Hintergrundbild (Mocktails)
+# Dein aktuelles Hintergrundbild (Mocktails)
 image_url = "https://img.freepik.com/premium-photo/selection-colorful-mocktails_941600-17041.jpg"
 
 # Hintergrund anwenden
