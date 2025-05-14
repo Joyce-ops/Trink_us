@@ -68,6 +68,9 @@ st.markdown(
         margin-bottom: 5px;
         text-align: center;
     }
+    .stTextInput > div > div:first-child {
+        margin-bottom: 0px; /* Entfernt den Abstand zwischen Titel und Suchleiste */
+    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -80,6 +83,9 @@ suchbegriff = st.text_input("", placeholder="Gib einen Mocktailnamen ein...")
 # Mocktails suchen und anzeigen
 mocktails = suche_mocktails(suchbegriff)  # Suche mit oder ohne Suchbegriff
 if mocktails:
+    # Titel über den Mocktails
+    st.subheader("Mocktail Vorschläge ✨")
+
     # Tabelle für die Mocktail-Vorschläge
     for idx, mocktail in enumerate(mocktails):
         col1, col2, col3 = st.columns([1, 2, 2])  # Spaltenbreiten anpassen
