@@ -7,9 +7,6 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import numpy as np
-
-
-import streamlit as st
 from utils.theme import apply_theme
 
 # Zustand für dark_mode sicherstellen
@@ -19,36 +16,45 @@ if "dark_mode" not in st.session_state:
 # Theme anwenden
 apply_theme()
 
-# Hintergrund
-def set_faded_background(image_url):
-    st.markdown(
-        f"""
-        <style>
-        .stApp {{
-            background: linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)),
-                        url("{image_url}");
-            background-size: cover;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-            background-position: center;
-        }}
-
-        .main > div {{
-            background-color: rgba(255, 255, 255, 0.85);
-            padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
-        }}
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-# Dein neues Hintergrundbild
+# ====== Hintergrundbild und Box-Design für beide Modi ======
 image_url = "https://wallpapercave.com/wp/wp2361388.jpg"
+if st.session_state["dark_mode"]:
+    # Dark Mode: Bild mit dunklem Overlay
+    bg_style = f"""
+        background: linear-gradient(rgba(20,20,20,0.85), rgba(20,20,20,0.85)), url("{image_url}");
+        background-size: cover;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        background-position: center;
+    """
+    main_bg = "rgba(30,30,30,0.85)"  # dunkler Bereich im Dark Mode
+else:
+    # Light Mode: Bild mit hellem Overlay
+    bg_style = f"""
+        background: linear-gradient(rgba(255,255,255,0.55), rgba(255,255,255,0.55)), url("{image_url}");
+        background-size: cover;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        background-position: center;
+    """
+    main_bg = "rgba(255,255,255,0.85)"  # weißer Bereich im Light Mode
 
-# Hintergrund anwenden
-set_faded_background(image_url)
+st.markdown(
+    f"""
+    <style>
+    .stApp {{
+        {bg_style}
+    }}
+    .main > div {{
+        background-color: {main_bg};
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 st.title("Mein Drink-Counter")
 
