@@ -220,5 +220,10 @@
         "strDrink": "Apple Berry Smoothie",
         "strDrinkThumb": "https://www.thecocktaildb.com/images/media/drink/xwqvur1468876473.jpg",
         "idDrink": "12710"
+    },
+    {
+        "strDrink": "Apello",
+        "strDrinkThumb": "https://www.thecocktaildb.com/images/media/drink/uptxtv1468876415.jpg",
+        "idDrink": "15106"
     }
 ]

@@ -59,6 +59,7 @@ class DataManager:
             fs: Filesystem interface instance
             app_data_reg (dict): Registry for application-wide data
             user_data_reg (dict): Registry for user-specific data
+            username (str): Current user's username (None if no user is logged in)
         """
         if hasattr(self, 'fs'):  # check if instance is already initialized
             return
@@ -68,6 +69,33 @@ class DataManager:
         self.fs = self._init_filesystem(fs_protocol)
         self.app_data_reg = {}
         self.user_data_reg = {}
+        self.username = None
+
+    def info(self):
+        """
+        Returns a formatted string with information about the DataManager's internal state.
+        
+        Returns:
+            str: A string containing information about filesystem, root folder, and data registries
+        """
+        info_str = f"DataManager Information:\n"
+        info_str += f"  Filesystem Type: {type(self.fs).__name__}\n"
+        info_str += f"  Root Folder: {self.fs_root_folder}\n"
+        info_str += f"  App Data Registry: {len(self.app_data_reg)} entries\n"
+        
+        if self.app_data_reg:
+            info_str += "    Registered app data files:\n"
+            for key, value in self.app_data_reg.items():
+                info_str += f"      - {key}: {value}\n"
+        
+        info_str += f"  User Data Registry: {len(self.user_data_reg)} entries\n"
+        
+        if self.user_data_reg:
+            info_str += "    Registered user data files:\n"
+            for key, value in self.user_data_reg.items():
+                info_str += f"      - {key}: {value}\n"
+                
+        return info_str
 
     @staticmethod
     def _init_filesystem(protocol: str):
@@ -134,6 +162,15 @@ class DataManager:
         st.session_state[session_state_key] = data
         self.app_data_reg[session_state_key] = file_name
 
+    def del_all_user_data(self):
+        """
+        Delete all user-specific data from the session state and data registry.
+        """
+        for key in self.user_data_reg:
+            st.session_state.pop(key)
+        self.user_data_reg = {}
+        self.username = None
+
     def load_user_data(self, session_state_key, file_name, initial_value=None, **load_args):
         """
         Load user-specific data from a file in the user's data folder.
@@ -157,11 +194,12 @@ class DataManager:
         """
         username = st.session_state.get('username', None)
         if username is None:
-            for key in self.user_data_reg:  # delete all user data
-                st.session_state.pop(key)
-            self.user_data_reg = {}
+            self.del_all_user_data()
             st.error(f"DataManager: No user logged in, cannot load file `{file_name}` into session state with key `{session_state_key}`")
             return
+        elif username != self.username:
+            self.del_all_user_data()
+            self.username = username
         elif session_state_key in st.session_state:
             return
 
