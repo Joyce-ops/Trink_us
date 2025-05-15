@@ -1,19 +1,32 @@
 # ====== Start Init Block ======
-# This needs to copied on top of the entry point of the app (Start.py)
 
 import pandas as pd
 from utils.data_manager import DataManager
 from utils.login_manager import LoginManager
-
 import streamlit as st
 
-# CSS-Funktion für blassen Hintergrund und Textanpassung
-def set_faded_background_and_text(image_url):
+# ==============================
+# Theme-Funktion: Hell/Dunkel-Modus
+# ==============================
+
+def apply_theme():
+    dark_mode = st.session_state.get("dark_mode", False)
+    if dark_mode:
+        image_url = "https://lamanne-paris.fr/wp-content/uploads/2021/07/astuces-ruiner-2048x1234.jpeg"
+        overlay_color = "rgba(0, 0, 0, 0.7)"
+        text_color = "#ffffff"
+        box_bg_color = "rgba(0, 0, 0, 0.6)"
+    else:
+        image_url = "https://lamanne-paris.fr/wp-content/uploads/2021/07/astuces-ruiner-2048x1234.jpeg"
+        overlay_color = "rgba(255, 255, 255, 0.5)"
+        text_color = "#000000"
+        box_bg_color = "rgba(255, 255, 255, 0.85)"
+
     st.markdown(
         f"""
         <style>
         .stApp {{
-            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), /* Dunkler Overlay */
+            background: linear-gradient({overlay_color}, {overlay_color}),
                         url("{image_url}");
             background-size: cover;
             background-attachment: fixed;
@@ -21,55 +34,81 @@ def set_faded_background_and_text(image_url):
             background-position: center;
         }}
 
-        /* Optional: Inhalte leicht hervorheben */
         .stApp > div:first-child {{
-            background-color: rgba(255, 255, 255, 0.85);
+            background-color: {box_bg_color};
             padding: 2rem;
             border-radius: 1rem;
             box-shadow: 0 0 10px rgba(0,0,0,0.2);
         }}
 
-        /* Text auf der gesamten Seite weiß */
-        .stMarkdown, .stTitle, .stInfo, .stText, .stCaption, .stHeader, .stSubheader {{
-            color: #ffffff !important; /* Weiße Schriftfarbe */
+        /* ALLE Textelemente robust ansprechen */
+        [data-testid="stMarkdownContainer"],
+        [data-testid="stHeader"],
+        [data-testid="stText"],
+        [data-testid="stTitle"],
+        [data-testid="stSubheader"],
+        [data-testid="stCaption"],
+        [data-testid="stExpander"],
+        [data-testid="stForm"],
+        .stMarkdown, .stText, .stTitle, .stSubheader {{
+            color: {text_color} !important;
         }}
 
-        /* Hinweisblock transparent rot hinterlegen */
+        /* Info-Boxen */
         div[data-testid="stAlert"] {{
-            background-color: rgba(255, 0, 0, 0.2) !important; /* Transparentes Rot */
-            border-left: none !important; /* Kein Rand */
-            color: #ffffff !important; /* Weiße Schrift im Hinweisblock */
+            background-color: rgba(255, 0, 0, 0.2) !important;
+            border-left: none !important;
+            color: {text_color} !important;
+        }}
+
+        /* Eingabefelder */
+        input, textarea, select {{
+            color: {text_color} !important;
+        }}
+
+        /* Tabellen */
+        .stDataFrame, .stTable {{
+            color: {text_color} !important;
+        }}
+
+        /* Button-Stil */
+        .stButton > button {{
+            color: {text_color} !important;
         }}
         </style>
         """,
         unsafe_allow_html=True
     )
 
-# Deine Bild-URL
-image_url = "https://lamanne-paris.fr/wp-content/uploads/2021/07/astuces-ruiner-2048x1234.jpeg"
+# Initialisierung für Darkmode
+if "dark_mode" not in st.session_state:
+    st.session_state["dark_mode"] = False
 
-# Hintergrund und Textanpassung anwenden
-set_faded_background_and_text(image_url)
+# Toggle für Dunkelmodus in der Sidebar
+st.sidebar.markdown("## Anzeige")
+st.session_state["dark_mode"] = st.sidebar.toggle("🌙 Dunkelmodus", value=st.session_state["dark_mode"])
 
-# initialize the data manager
-data_manager = DataManager(fs_protocol='webdav', fs_root_folder="AppV1")  # switch drive 
+# Theme anwenden
+apply_theme()
 
-# initialize the login manager
+# Initialisiere Daten und Login
+data_manager = DataManager(fs_protocol='webdav', fs_root_folder="AppV1")
 login_manager = LoginManager(data_manager)
-login_manager.login_register()  # open login/register page
+login_manager.login_register()
 
-# load the data from the persistent storage into the session state
 data_manager.load_user_data(
-    session_state_key='data_df', 
-    file_name='data.csv', 
-    initial_value = pd.DataFrame(), 
-    parse_dates = ['timestamp']
-    )
+    session_state_key='data_df',
+    file_name='data.csv',
+    initial_value=pd.DataFrame(),
+    parse_dates=['timestamp']
+)
+
 # ====== End Init Block ======
 
-# ------------------------------------------------------------
-# Here starts the actual app, which was developed previously
-import streamlit as st
+
+# ==============================
+# Startseite Inhalt
+# ==============================
 
 # Initialisiere den Seitenstatus
 if "page" not in st.session_state:

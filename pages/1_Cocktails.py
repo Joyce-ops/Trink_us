@@ -8,7 +8,14 @@ import streamlit as st
 from PIL import Image
 import json
 import pandas as pd  # Für das Lesen der CSV-Datei
+from utils.theme import apply_theme
 
+# Zustand für dark_mode sicherstellen
+if "dark_mode" not in st.session_state:
+    st.session_state["dark_mode"] = False
+
+# Theme anwenden
+apply_theme()
 
 # Pfad zum drinks-Ordner und zur CSV-Datei
 pages_folder = os.path.dirname(os.path.abspath(__file__))

@@ -7,6 +7,14 @@ import os
 import json
 import requests
 import streamlit as st
+from utils.theme import apply_theme
+
+# Zustand für dark_mode sicherstellen
+if "dark_mode" not in st.session_state:
+    st.session_state["dark_mode"] = False
+
+# Theme anwenden
+apply_theme()
 
 # Titel der Seite
 st.title("🍹 Cocktail Library")

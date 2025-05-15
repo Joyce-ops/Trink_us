@@ -5,6 +5,14 @@ LoginManager().go_to_login('Start.py')
 
 import streamlit as st
 import requests
+from utils.theme import apply_theme
+
+# Zustand für dark_mode sicherstellen
+if "dark_mode" not in st.session_state:
+    st.session_state["dark_mode"] = False
+
+# Theme anwenden
+apply_theme()
 
 # Funktion: CSS für einen stark überlagerten Hintergrund
 def set_faded_background(image_url):

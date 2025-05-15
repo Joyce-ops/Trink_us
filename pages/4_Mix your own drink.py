@@ -5,42 +5,15 @@ from pathlib import Path
 # ====== App Layout und Titel ======
 st.set_page_config(page_title="Cocktail Creator", page_icon="🍹", layout="centered")
 
-# Funktion: CSS für einen stark überlagerten Hintergrund und Rahmen um den Bearbeitungsbereich
-def set_faded_background_and_border(image_url):
-    st.markdown(
-        f"""
-        <style>
-        .stApp {{
-            background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), /* Dunkler Overlay */
-                        url("{image_url}");
-            background-size: cover;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-            background-position: center;
-        }}
+# ====== Theme-System importieren ======
+from utils.theme import apply_theme
 
-        .main > div {{
-            background-color: rgba(255, 255, 255, 0.85);
-            padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
-            border: 2px solid #ffffff; /* Helle Linie um den Bearbeitungsbereich */
-        }}
+# Zustand für dark_mode sicherstellen
+if "dark_mode" not in st.session_state:
+    st.session_state["dark_mode"] = False
 
-        /* Text auf der gesamten Seite weiß */
-        .stMarkdown, .stTitle, .stInfo, .stText, .stCaption, .stHeader, .stSubheader {{
-            color: #ffffff !important; /* Weiße Schriftfarbe */
-        }}
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-# Dein neues Hintergrundbild (Cocktail-Mixer)
-image_url = "https://www.azuniatequila.com/wp-content/uploads/2020/01/Bar-Tools-Set-1024x713.jpg"
-
-# Hintergrund und Rahmen anwenden
-set_faded_background_and_border(image_url)
+# Theme anwenden
+apply_theme()
 
 # ====== Start Login Block ======
 from utils.login_manager import LoginManager
@@ -81,13 +54,9 @@ default_ingredients = [
     "Bitter Lemon", "Grenadine", "Himbeersirup", "Kokosnusscreme", "Kokosmilch",
     "Erdbeeren", "Himbeeren", "Blaubeeren", "Ananas", "Mango", "Kiwi", "Banane",
     "Pfirsich", "Melone", "Trauben", "Kirschen", "Zimt", "Vanille", "Ingwer",   
-    "Cola", "Tonic Water", "Soda", "Zuckersirup", "Zitronenlimonade",
-    "Grenadine", "Minze", "Basilikum", "Rosmarin", "Thymian", "Pfeffer", "Chili", "lavendel",
-    "Matcha", "Kokosnuss", "Erdbeeren", "Himbeeren", "Blaubeeren", "Ananas", "Matcha",
-    "Kiwi", "Banane", "Pfirsich", "Melone", "Trauben", "Kirschen", "Zimt", "Vanille", 
-    "Kardamom", "Muskatnuss", "Koriander", "Anis", "Nelken", "Pfefferminzsirup",
-    "Grenadine", "Minze", "Eiswürfel", "Ingwer", "Basilikum", "Rosmarin", "Thymian",
-    "Pfeffer", "Chili", "Kardamom", "Muskatnuss", "Koriander", "Anis", "Nelken",    
+    "Cola", "Soda", "Zuckersirup", "Minze", "Basilikum", "Rosmarin", "Thymian",
+    "Pfeffer", "Chili", "Lavendel", "Matcha", "Kardamom", "Muskatnuss", 
+    "Koriander", "Anis", "Nelken", "Pfefferminzsirup", "Eiswürfel"   
 ]
 
 # Kombinierte Zutatenliste anzeigen
@@ -104,11 +73,9 @@ if st.button("🍹 Cocktail mixen!"):
     if not cocktail_name:
         st.warning("Bitte gib deinem Cocktail einen Namen.")
     else:
-        # Überprüfen, ob Zutaten ausgewählt wurden
         if not selected_ingredients:
             st.warning("Bitte wähle mindestens eine Zutat aus.")
         else:
-            # Cocktail speichern
             cocktails[cocktail_name] = {
                 "Basis": base,
                 "Zutaten": selected_ingredients,
@@ -117,8 +84,7 @@ if st.button("🍹 Cocktail mixen!"):
             save_cocktails(cocktails)
             st.success(f"**{cocktail_name}** ist fertig gemixt und wurde gespeichert!")
             st.markdown(f"""
-            **Rezept für _{cocktail_name}_:**
-
+            **Rezept für _{cocktail_name}_:**  
             - **Basis:** {base}  
             - **Zutaten:** {', '.join(selected_ingredients)}  
             - **Deko:** {decoration}
