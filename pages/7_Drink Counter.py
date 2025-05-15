@@ -1,3 +1,8 @@
+# ====== Start Login Block ======
+from utils.login_manager import LoginManager
+LoginManager().go_to_login('Start.py') 
+# ====== End Login Block ======
+
 import streamlit as st
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
