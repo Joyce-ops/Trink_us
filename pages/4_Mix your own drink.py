@@ -1,12 +1,10 @@
 import streamlit as st
 import json
 from pathlib import Path
+from utils.theme import apply_theme
 
 # ====== App Layout und Titel ======
 st.set_page_config(page_title="Cocktail Creator", page_icon="🍹", layout="centered")
-
-# ====== Theme-System importieren ======
-from utils.theme import apply_theme
 
 # Zustand für dark_mode sicherstellen
 if "dark_mode" not in st.session_state:
@@ -19,6 +17,49 @@ apply_theme()
 from utils.login_manager import LoginManager
 LoginManager().go_to_login('Start.py') 
 # ====== End Login Block ======
+
+# ====== Hintergrundbild und Box-Design für beide Modi ======
+image_url = "https://www.azuniatequila.com/wp-content/uploads/2020/01/Bar-Tools-Set-1024x713.jpg"
+if st.session_state["dark_mode"]:
+    # Dark Mode: Bild mit dunklem Overlay
+    bg_style = f"""
+        background: linear-gradient(rgba(20,20,20,0.85), rgba(20,20,20,0.85)), url("{image_url}");
+        background-size: cover;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        background-position: center;
+    """
+    main_bg = "rgba(30,30,30,0.85)"  # dunkler Bereich im Dark Mode
+    border = "#222"
+else:
+    # Light Mode: Bild ohne Overlay
+    bg_style = f"""
+        background: url("{image_url}");
+        background-size: cover;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        background-position: center;
+    """
+    main_bg = "rgba(255,255,255,0.85)"  # weißer Bereich im Light Mode
+    border = "#fff"
+
+st.markdown(
+    f"""
+    <style>
+    .stApp {{
+        {bg_style}
+    }}
+    .main > div {{
+        background-color: {main_bg};
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        border: 2px solid {border};
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 st.title("🍸 Dein eigener Cocktail-Mixer")
 
