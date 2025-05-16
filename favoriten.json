@@ -225,5 +225,10 @@
         "strDrink": "Apello",
         "strDrinkThumb": "https://www.thecocktaildb.com/images/media/drink/uptxtv1468876415.jpg",
         "idDrink": "15106"
+    },
+    {
+        "strDrink": "Banana Milk Shake",
+        "strDrinkThumb": "https://www.thecocktaildb.com/images/media/drink/rtwwsx1472720307.jpg",
+        "idDrink": "12654"
     }
 ]
