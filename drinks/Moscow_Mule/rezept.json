@@ -1,0 +1,36 @@
+{
+    "name": "Moscow Mule",
+    "ingredients": [
+        {
+            "name": "Wodka",
+            "amount": "50ml"
+        },
+        {
+            "name": "Ginger Beer",
+            "amount": "120ml"
+        },
+        {
+            "name": "Limettensaft",
+            "amount": "10ml"
+        },
+        {
+            "name": "Eiswürfel",
+            "amount": "nach Bedarf"
+        },
+        {
+            "name": "Limettenscheibe",
+            "amount": "1 Scheibe"
+        },
+        {
+            "name": "Minzblätter",
+            "amount": "ein paar"
+        }
+    ],
+    "instructions": [
+        "Fülle einen Kupferbecher mit Eiswürfeln.",
+        "Gieße den Wodka und den Limettensaft hinein.",
+        "Mit Ginger Beer auffüllen und vorsichtig umrühren.",
+        "Mit einer Limettenscheibe und Minzblättern garnieren.",
+        "Sofort servieren und genießen."
+    ]
+}

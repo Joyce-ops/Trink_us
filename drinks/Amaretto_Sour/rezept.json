@@ -1,0 +1,35 @@
+
+{
+    "name": "Amaretto Sour",
+    "ingredients": [
+        {
+            "name": "Amaretto",
+            "amount": "50ml"
+        },
+        {
+            "name": "Zitronensaft",
+            "amount": "30ml"
+        },
+        {
+            "name": "Zuckersirup",
+            "amount": "10ml"
+        },
+        {
+            "name": "Eiweiß",
+            "amount": "1"
+        },
+        {
+            "name": "Eiswürfel",
+            "amount": "nach Bedarf"
+        }
+    ],
+    "instructions": [
+        "Amaretto, Zitronensaft, Zuckersirup und Eiweiß in einen Shaker geben.",
+        "Kräftig ohne Eis shaken (Dry Shake), um das Eiweiß aufzuschäumen.",
+        "Eiswürfel hinzufügen und erneut shaken, bis der Shaker gut gekühlt ist.",
+        "In ein Glas mit frischen Eiswürfeln abseihen.",
+        "Optional mit einer Zitronenscheibe oder Cocktailkirsche garnieren."
+    ],
+    "glass": "Old Fashioned Glas",
+    "garnish": "Zitronenscheibe oder Cocktailkirsche"
+}

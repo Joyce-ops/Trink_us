@@ -1,0 +1,30 @@
+{
+    "cocktail": "Manhattan",
+    "ingredients": [
+        {
+            "name": "Roggenwhiskey",
+            "amount": "60ml"
+        },
+        {
+            "name": "Süßer Wermut",
+            "amount": "30ml"
+        },
+        {
+            "name": "Angostura-Bitter",
+            "amount": "2 Tropfen"
+        },
+        {
+            "name": "Kirsche",
+            "amount": "1 (zur Garnitur)"
+        }
+    ],
+    "instructions": [
+        "Fülle ein Rührglas mit Eis.",
+        "Füge Roggenwhiskey, süßen Wermut und Angostura-Bitter hinzu.",
+        "Gut umrühren, bis der Drink gekühlt ist.",
+        "In ein gekühltes Cocktailglas abseihen.",
+        "Mit einer Kirsche garnieren."
+    ],
+    "glass": "Cocktailglas",
+    "category": "Klassisch"
+}

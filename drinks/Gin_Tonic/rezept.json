@@ -1,0 +1,27 @@
+{
+    "name": "Gin Tonic",
+    "bild": "gin_tonic.jpg",
+    "ingredients": [
+        {
+            "name": "Gin",
+            "amount": 50,
+            "unit": "ml"
+        },
+        {
+            "name": "Tonic Water",
+            "amount": 150,
+            "unit": "ml"
+        },
+        {
+            "name": "Limette",
+            "amount": 1,
+            "unit": ""
+        }
+    ],
+    "instructions": [
+        "Fülle ein Glas mit Eiswürfeln.",
+        "Gieße den Gin über die Eiswürfel.",
+        "Fülle das Glas mit Tonic Water auf.",
+        "Gib eine Limettenscheibe dazu."
+    ] 
+}
