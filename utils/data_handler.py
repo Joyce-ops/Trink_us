@@ -3,7 +3,7 @@ import pandas as pd
 from io import StringIO
 
 class DataHandler:
-    def __init__(self, filesystem, root_path):
+    def _init_(self, filesystem, root_path):
         """
         Initialize the DataHandler with an fsspec filesystem and a root path.
 
@@ -153,47 +153,4 @@ class DataHandler:
         elif isinstance(content, bytes):
             self.write_binary(relative_path, content)
         else:
-            raise ValueError(f"Unsupported content type for extension {ext}")
-        
-
-import pandas as pd
-from datetime import datetime
-import os
-
-CLICK_FILE = "user_clicks.csv"
-
-def save_drink_click(user, drink):
-    now = datetime.now()
-    new_entry = pd.DataFrame([[user, drink, now]], columns=["user", "drink", "timestamp"])
-
-    if os.path.exists(CLICK_FILE):
-        new_entry.to_csv(CLICK_FILE, mode="a", index=False, header=False)
-    else:
-        new_entry.to_csv(CLICK_FILE, index=False)
-
-#Statistik
-# utils/data_handler.py
-
-import pandas as pd
-from datetime import datetime
-import os
-
-CLICK_FILE = "user_clicks.csv"
-
-def save_drink_click(user, drink):
-    new_entry = {
-        "user": user,
-        "drink": drink,
-        "timestamp": datetime.now()
-    }
-
-    # Lade vorhandene Daten oder erstelle eine neue DataFrame
-    if os.path.exists(CLICK_FILE):
-        df = pd.read_csv(CLICK_FILE)
-        df = pd.concat([df, pd.DataFrame([new_entry])], ignore_index=True)
-    else:
-        df = pd.DataFrame([new_entry])
-
-    # Speichere die aktualisierten Daten
-    df.to_csv(CLICK_FILE, index=False)
-       
+            raise ValueError(f"Unsupported content type for extension {ext}")

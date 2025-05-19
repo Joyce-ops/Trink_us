@@ -92,7 +92,7 @@ st.session_state["dark_mode"] = st.sidebar.toggle("🌙 Dunkelmodus", value=st.s
 apply_theme()
 
 # Initialisiere Daten und Login
-data_manager = DataManager(fs_protocol='webdav', fs_root_folder="AppV1")
+data_manager = DataManager()
 login_manager = LoginManager(data_manager)
 login_manager.login_register()
 

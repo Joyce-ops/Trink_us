@@ -3,9 +3,11 @@ from utils.login_manager import LoginManager
 LoginManager().go_to_login('Start.py') 
 # ====== End Login Block ======
 
-import os
-import json
 import streamlit as st
+import requests
+import csv
+import io
+from requests.auth import HTTPBasicAuth
 from utils.theme import apply_theme
 
 # Zustand für dark_mode sicherstellen
@@ -15,46 +17,65 @@ if "dark_mode" not in st.session_state:
 # Theme anwenden
 apply_theme()
 
-# Titel der Seite
 st.title("Ihre Favoriten 🍹")
 
-# Pfad zur JSON-Datei für Favoriten
-pages_folder = os.path.dirname(os.path.abspath(__file__))
-favoriten_datei = os.path.join(pages_folder, "../favoriten.json")
+# WebDAV-Zugangsdaten
+base_url = st.secrets["webdav"]["base_url"]
+user = st.secrets["webdav"]["username"]
+app_passwort = st.secrets["webdav"]["password"]
+remote_favoriten_url = f"{base_url}/files/{user}/data.csv"
 
-# Favoriten aus der JSON-Datei laden
+# Favoriten aus Switch Drive laden (CSV)
 def favoriten_laden():
-    if os.path.exists(favoriten_datei):
-        with open(favoriten_datei, "r", encoding="utf-8") as file:
-            try:
-                return json.load(file)
-            except json.JSONDecodeError:
-                st.error("Fehler beim Laden der Favoriten. Die Datei ist beschädigt.")
-                return []
-    return []
+    try:
+        response = requests.get(remote_favoriten_url, auth=HTTPBasicAuth(user, app_passwort))
+        if response.status_code == 200:
+            csvfile = io.StringIO(response.text)
+            reader = csv.DictReader(csvfile)
+            return list(reader)
+        else:
+            return []
+    except Exception as e:
+        st.error(f"Fehler beim Laden der Favoriten: {e}")
+        return []
 
-# Favoriten initialisieren
+# Favoriten laden
 favoriten = favoriten_laden()
 
-# Gespeicherte Favoriten anzeigen
-st.write("Ihre gespeicherten Rezepte:")
-if favoriten:
-    # Teile die Favoriten in 3 Spalten auf
-    cols = st.columns(3)
-    for index, rezept in enumerate(favoriten):
-        # Wähle die aktuelle Spalte basierend auf dem Index
-        col = cols[index % 3]
-        with col:
-            st.image(rezept["strDrinkThumb"], width=150)
-            st.write(f"**{rezept['strDrink']}**")
-            
-            # Button für Details
-            if st.button(f"zum Rezept", key=f"details_{index}"):
-                st.write("Zutaten:")
-                st.write("- 50ml Tequila")
-                st.write("- 25ml Triple Sec")
-                st.write("- 25ml Limettensaft")
-                st.write("Zubereitung:")
-                st.write("Alle Zutaten in einem Shaker mit Eis mischen. In ein Glas mit Salzrand abseihen.")
+if not favoriten:
+    st.info("Noch keine Favoriten gespeichert.")
+    st.stop()
+
+# Favoriten als Tabelle anzeigen (wie im BMI-Beispiel)
+import pandas as pd
+df = pd.DataFrame(favoriten)
+if not df.empty:
+    # Optional: Sortieren nach Name oder anderem Feld
+    df = df.sort_values('strDrink')
+    st.dataframe(df[["strDrink", "strInstructions"] + [col for col in df.columns if col.startswith("strIngredient") or col.startswith("strMeasure") or col == "strDrinkThumb"]])
 else:
-    st.warning("Noch keine Favoriten gespeichert.")
+    st.info("Keine Favoriten vorhanden.")
+
+# Optional: Bilder und Details in Spalten anzeigen
+st.markdown("---")
+st.subheader("Favoriten als Karten")
+cols = st.columns(3)
+for idx, rezept in enumerate(favoriten):
+    col = cols[idx % 3]
+    with col:
+        if rezept.get("strDrinkThumb"):
+            st.image(rezept["strDrinkThumb"], width=120)
+        st.markdown(f"**{rezept.get('strDrink', 'Unbekannter Drink')}**")
+        if st.button("Rezept anzeigen", key=f"details_{idx}"):
+            zutaten = []
+            for i in range(1, 16):
+                zutat = rezept.get(f"strIngredient{i}")
+                menge = rezept.get(f"strMeasure{i}")
+                if zutat and zutat.strip():
+                    zutaten.append(f"- {menge or ''} {zutat}".strip())
+            if zutaten:
+                st.markdown("**Zutaten:**")
+                for z in zutaten:
+                    st.markdown(z)
+            st.markdown("**Zubereitung:**")
+            st.write(rezept.get("strInstructions", "Keine Anleitung vorhanden."))
