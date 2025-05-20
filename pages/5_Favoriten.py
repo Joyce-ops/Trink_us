@@ -5,8 +5,22 @@ LoginManager().go_to_login('Start.py')
 
 import streamlit as st
 import pandas as pd
+import requests
+import io
+import csv
+from requests.auth import HTTPBasicAuth
 from utils.theme import apply_theme
-from utils.favoriten import favoriten_laden, favoriten_speichern
+
+# --- WebDAV Zugangsdaten ---
+base_url = st.secrets["webdav"]["base_url"]
+webdav_user = st.secrets["webdav"]["username"]
+webdav_password = st.secrets["webdav"]["password"]
+
+# --- Benutzername prüfen ---
+username = st.session_state.get("username")
+if not username:
+    st.error("Bitte zuerst einloggen.")
+    st.stop()
 
 # Zustand für dark_mode sicherstellen
 if "dark_mode" not in st.session_state:
@@ -16,7 +30,51 @@ apply_theme()
 
 st.title("Ihre Favoriten 🍹")
 
-username = st.session_state.get("username")
+# --- Pfad zur benutzerspezifischen Datei ---
+def get_favoriten_pfad(username):
+    return f"{base_url}/files/{webdav_user}/trink_us/favoriten_{username}.csv"
+
+# --- Favoriten laden ---
+def favoriten_laden(username):
+    url = get_favoriten_pfad(username)
+    auth = HTTPBasicAuth(webdav_user, webdav_password)
+    try:
+        response = requests.get(url, auth=auth)
+        if response.status_code == 200:
+            content = response.content.decode("utf-8")
+            reader = csv.DictReader(io.StringIO(content))
+            return list(reader)
+    except Exception as e:
+        st.error(f"Fehler beim Laden der Favoriten: {e}")
+    return []
+
+# --- Favoriten speichern ---
+def favoriten_speichern(username, favoriten_liste):
+    url = get_favoriten_pfad(username)
+    auth = HTTPBasicAuth(webdav_user, webdav_password)
+
+    if not favoriten_liste:
+        csv_content = ""
+    else:
+        output = io.StringIO()
+        writer = csv.DictWriter(output, fieldnames=favoriten_liste[0].keys())
+        writer.writeheader()
+        writer.writerows(favoriten_liste)
+        csv_content = output.getvalue()
+
+    try:
+        response = requests.put(
+            url,
+            data=csv_content.encode("utf-8"),
+            headers={"Content-Type": "text/csv"},
+            auth=auth
+        )
+        if response.status_code not in [200, 201, 204]:
+            st.error(f"Fehler beim Speichern: {response.status_code}")
+    except Exception as e:
+        st.error(f"Fehler beim Speichern der Favoriten: {e}")
+
+# --- Favoriten anzeigen ---
 favoriten = favoriten_laden(username)
 
 if not favoriten:

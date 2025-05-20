@@ -1,54 +1,40 @@
 # utils/favoriten.py
 
 import requests
-import io
 import csv
+import io
 from requests.auth import HTTPBasicAuth
 import streamlit as st
 
-def get_favoriten_url(username: str):
+def get_remote_path(username):
     base_url = st.secrets["webdav"]["base_url"]
-    webdav_user = st.secrets["webdav"]["username"]
-    password = st.secrets["webdav"]["password"]
+    user = st.secrets["webdav"]["username"]
+    return f"{base_url}/files/{user}/trink_us/favoriten_{username}.csv"
 
-    remote_path = f"{base_url}/files/{webdav_user}/trink_us/user_data_{username}/favoriten.csv"
-    auth = HTTPBasicAuth(webdav_user, password)
-    return remote_path, auth
-
-def favoriten_laden(username: str):
-    url, auth = get_favoriten_url(username)
+def favoriten_laden(username):
+    url = get_remote_path(username)
+    auth = HTTPBasicAuth(st.secrets["webdav"]["username"], st.secrets["webdav"]["password"])
     try:
         response = requests.get(url, auth=auth)
         if response.status_code == 200:
-            csvfile = io.StringIO(response.text)
-            reader = csv.DictReader(csvfile)
+            content = response.content.decode("utf-8")
+            reader = csv.DictReader(io.StringIO(content))
             return list(reader)
         else:
             return []
-    except Exception as e:
-        st.error(f"Fehler beim Laden der Favoriten: {e}")
+    except Exception:
         return []
 
-def favoriten_speichern(username: str, favoriten_liste):
-    url, auth = get_favoriten_url(username)
-    try:
-        if not favoriten_liste:
-            csv_content = ""
-        else:
-            output = io.StringIO()
-            fieldnames = favoriten_liste[0].keys()
-            writer = csv.DictWriter(output, fieldnames=fieldnames)
-            writer.writeheader()
-            for fav in favoriten_liste:
-                writer.writerow(fav)
-            csv_content = output.getvalue()
-        response = requests.put(
-            url,
-            data=csv_content.encode("utf-8"),
-            headers={'Content-Type': 'text/csv'},
-            auth=auth
-        )
-        if response.status_code not in [200, 201, 204]:
-            st.error(f"Fehler beim Speichern der Favoriten: {response.status_code}")
-    except Exception as e:
-        st.error(f"Fehler beim Speichern der Favoriten: {e}")
+def favoriten_speichern(username, favoriten_liste):
+    url = get_remote_path(username)
+    auth = HTTPBasicAuth(st.secrets["webdav"]["username"], st.secrets["webdav"]["password"])
+    output = io.StringIO()
+    if favoriten_liste:
+        writer = csv.DictWriter(output, fieldnames=favoriten_liste[0].keys())
+        writer.writeheader()
+        writer.writerows(favoriten_liste)
+        data = output.getvalue()
+        try:
+            requests.put(url, data=data.encode("utf-8"), auth=auth)
+        except Exception as e:
+            st.error(f"Fehler beim Speichern der Favoriten: {e}")
