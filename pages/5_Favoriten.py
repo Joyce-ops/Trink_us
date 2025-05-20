@@ -1,73 +1,63 @@
-import streamlit as st
-import pandas as pd
-import requests
-import io
-import csv
-from requests.auth import HTTPBasicAuth
-
-# Login
+# ====== Start Login Block ======
 from utils.login_manager import LoginManager
 LoginManager().go_to_login('Start.py') 
+# ====== End Login Block ======
 
-username = st.session_state.get("username")
-if not username:
-    st.stop()
+import streamlit as st
+import requests
+import csv
+import io
+from requests.auth import HTTPBasicAuth
+from utils.theme import apply_theme
 
-# WebDAV
+# Zustand für dark_mode sicherstellen
+if "dark_mode" not in st.session_state:
+    st.session_state["dark_mode"] = False
+
+# Theme anwenden
+apply_theme()
+
+st.title("Ihre Favoriten 🍹")
+
+# WebDAV-Zugangsdaten
 base_url = st.secrets["webdav"]["base_url"]
-webdav_user = st.secrets["webdav"]["username"]
-webdav_password = st.secrets["webdav"]["password"]
-user_path = f"{base_url}/trink_us/user_data_{username}/data.csv"
-auth = HTTPBasicAuth(webdav_user, webdav_password)
+user = st.secrets["webdav"]["username"]
+app_passwort = st.secrets["webdav"]["password"]
+remote_favoriten_url = f"{base_url}/files/{user}/data.csv"
 
-# Favoriten laden
+# Favoriten aus Switch Drive laden (CSV)
 def favoriten_laden():
     try:
-        response = requests.get(user_path, auth=auth)
+        response = requests.get(remote_favoriten_url, auth=HTTPBasicAuth(user, app_passwort))
         if response.status_code == 200:
-            content = io.StringIO(response.text)
-            return list(csv.DictReader(content))
-    except:
-        pass
-    return []
-
-# Favoriten speichern
-def favoriten_speichern(favs):
-    try:
-        if not favs:
-            data = ""
+            csvfile = io.StringIO(response.text)
+            reader = csv.DictReader(csvfile)
+            return list(reader)
         else:
-            output = io.StringIO()
-            writer = csv.DictWriter(output, fieldnames=favs[0].keys())
-            writer.writeheader()
-            writer.writerows(favs)
-            data = output.getvalue()
-        requests.put(user_path, data=data.encode("utf-8"), auth=auth)
+            return []
     except Exception as e:
-        st.error(f"Fehler beim Speichern: {e}")
+        st.error(f"Fehler beim Laden der Favoriten: {e}")
+        return []
 
-# UI
-st.title("Ihre Favoriten 🍹")
+# Favoriten laden
 favoriten = favoriten_laden()
 
 if not favoriten:
     st.info("Noch keine Favoriten gespeichert.")
     st.stop()
 
-st.markdown("### Favoriten verwalten")
-auswahl = st.multiselect("Favoriten löschen:", [f"{f['idDrink']} - {f['strDrink']}" for f in favoriten])
+# Favoriten als Tabelle anzeigen (wie im BMI-Beispiel)
+import pandas as pd
+df = pd.DataFrame(favoriten)
+if not df.empty:
+    # Optional: Sortieren nach Name oder anderem Feld
+    df = df.sort_values('strDrink')
+    st.dataframe(df[["strDrink", "strInstructions"] + [col for col in df.columns if col.startswith("strIngredient") or col.startswith("strMeasure") or col == "strDrinkThumb"]])
+else:
+    st.info("Keine Favoriten vorhanden.")
 
-if st.button("Ausgewählte löschen"):
-    favoriten = [f for f in favoriten if f"{f['idDrink']} - {f['strDrink']}" not in auswahl]
-    favoriten_speichern(favoriten)
-    st.success("Favoriten gelöscht.")
-    st.experimental_rerun()
-
-# Download
-csv_download = pd.DataFrame(favoriten).to_csv(index=False).encode("utf-8")
-st.download_button("📥 CSV herunterladen", csv_download, "data.csv", "text/csv")
-
-# Anzeige als Karten
+# Optional: Bilder und Details in Spalten anzeigen
+st.markdown("---")
 st.subheader("Favoriten als Karten")
 cols = st.columns(3)
 for idx, rezept in enumerate(favoriten):
@@ -75,17 +65,17 @@ for idx, rezept in enumerate(favoriten):
     with col:
         if rezept.get("strDrinkThumb"):
             st.image(rezept["strDrinkThumb"], width=120)
-        st.markdown(f"**{rezept.get('strDrink', 'Unbekannter Drink')}**")
-        if st.button("Details anzeigen", key=f"details_{idx}"):
+        st.markdown(f"*{rezept.get('strDrink', 'Unbekannter Drink')}*")
+        if st.button("Rezept anzeigen", key=f"details_{idx}"):
             zutaten = []
             for i in range(1, 16):
                 zutat = rezept.get(f"strIngredient{i}")
                 menge = rezept.get(f"strMeasure{i}")
-                if zutat:
+                if zutat and zutat.strip():
                     zutaten.append(f"- {menge or ''} {zutat}".strip())
             if zutaten:
-                st.markdown("**Zutaten:**")
+                st.markdown("*Zutaten:*")
                 for z in zutaten:
                     st.markdown(z)
-            st.markdown("**Zubereitung:**")
-            st.write(rezept.get("strInstructions", "Keine Anleitung"))
+            st.markdown("*Zubereitung:*")
+            st.write(rezept.get("strInstructions", "Keine Anleitung vorhanden."))
