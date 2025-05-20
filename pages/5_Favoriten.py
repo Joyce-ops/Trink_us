@@ -17,7 +17,7 @@ if not username:
 base_url = st.secrets["webdav"]["base_url"]
 webdav_user = st.secrets["webdav"]["username"]
 webdav_password = st.secrets["webdav"]["password"]
-user_path = f"{base_url}/trink_us/user_data_{username}/favoriten.csv"
+user_path = f"{base_url}/trink_us/user_data_{username}/data.csv"
 auth = HTTPBasicAuth(webdav_user, webdav_password)
 
 # Favoriten laden
@@ -65,7 +65,7 @@ if st.button("Ausgewählte löschen"):
 
 # Download
 csv_download = pd.DataFrame(favoriten).to_csv(index=False).encode("utf-8")
-st.download_button("📥 CSV herunterladen", csv_download, "favoriten.csv", "text/csv")
+st.download_button("📥 CSV herunterladen", csv_download, "data.csv", "text/csv")
 
 # Anzeige als Karten
 st.subheader("Favoriten als Karten")

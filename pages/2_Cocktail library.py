@@ -18,7 +18,7 @@ webdav_user = st.secrets["webdav"]["username"]
 webdav_password = st.secrets["webdav"]["password"]
 
 # Benutzerpfad
-user_path = f"{base_url}/trink_us/user_data_{username}/favoriten.csv"
+user_path = f"{base_url}/trink_us/user_data_{username}/data.csv"
 auth = HTTPBasicAuth(webdav_user, webdav_password)
 
 # Favoriten laden
