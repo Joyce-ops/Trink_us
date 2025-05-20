@@ -91,8 +91,9 @@ st.session_state["dark_mode"] = st.sidebar.toggle("🌙 Dunkelmodus", value=st.s
 # Theme anwenden
 apply_theme()
 
+
 # Initialisiere Daten und Login
-data_manager = DataManager()
+data_manager = DataManager(fs_protocol='webdav', fs_root_folder="Trink us")  # switch drive
 login_manager = LoginManager(data_manager)
 login_manager.login_register()
 
