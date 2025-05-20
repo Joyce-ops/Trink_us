@@ -3,7 +3,7 @@ import pandas as pd
 from io import StringIO
 
 class DataHandler:
-    def _init_(self, filesystem, root_path):
+    def __init__(self, filesystem, root_path):
         """
         Initialize the DataHandler with an fsspec filesystem and a root path.
 
@@ -153,4 +153,4 @@ class DataHandler:
         elif isinstance(content, bytes):
             self.write_binary(relative_path, content)
         else:
-            raise ValueError(f"Unsupported content type for extension {ext}")
+            raise ValueError(f"Unsupported content type for extension {ext}")
