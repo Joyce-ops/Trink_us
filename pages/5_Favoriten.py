@@ -1,62 +1,59 @@
 # ====== Start Login Block ======
 from utils.login_manager import LoginManager
-LoginManager().go_to_login('Start.py') 
+LoginManager().go_to_login('favoriten.py')
 # ====== End Login Block ======
 
 import streamlit as st
 import requests
 import csv
 import io
+import pandas as pd
 from requests.auth import HTTPBasicAuth
 from utils.theme import apply_theme
 
-# Zustand für dark_mode sicherstellen
+# Theme
 if "dark_mode" not in st.session_state:
     st.session_state["dark_mode"] = False
-
-# Theme anwenden
 apply_theme()
+
+# Login prüfen
+username = st.session_state.get("username")
+if not username:
+    st.error("Bitte zuerst einloggen!")
+    st.stop()
+
+# WebDAV-Zugang
+base_url = st.secrets["webdav"]["base_url"]
+user = st.secrets["webdav"]["username"]
+password = st.secrets["webdav"]["password"]
+
+# Pfad dynamisch
+def get_favoriten_url(username):
+    return f"{base_url}/files/{user}/trink_us/favoriten_{username}.csv"
+
+# Laden
+def favoriten_laden(username):
+    try:
+        response = requests.get(get_favoriten_url(username), auth=HTTPBasicAuth(user, password))
+        if response.status_code == 200 and response.text.strip():
+            return list(csv.DictReader(io.StringIO(response.text)))
+    except Exception as e:
+        st.error(f"Fehler beim Laden: {e}")
+    return []
 
 st.title("Ihre Favoriten 🍹")
 
-# WebDAV-Zugangsdaten
-base_url = st.secrets["webdav"]["base_url"]
-user = st.secrets["webdav"]["username"]
-app_passwort = st.secrets["webdav"]["password"]
-remote_favoriten_url = f"{base_url}/files/{user}/data.csv"
-
-# Favoriten aus Switch Drive laden (CSV)
-def favoriten_laden():
-    try:
-        response = requests.get(remote_favoriten_url, auth=HTTPBasicAuth(user, app_passwort))
-        if response.status_code == 200:
-            csvfile = io.StringIO(response.text)
-            reader = csv.DictReader(csvfile)
-            return list(reader)
-        else:
-            return []
-    except Exception as e:
-        st.error(f"Fehler beim Laden der Favoriten: {e}")
-        return []
-
-# Favoriten laden
-favoriten = favoriten_laden()
-
+favoriten = favoriten_laden(username)
 if not favoriten:
     st.info("Noch keine Favoriten gespeichert.")
     st.stop()
 
-# Favoriten als Tabelle anzeigen (wie im BMI-Beispiel)
-import pandas as pd
+# Tabelle
 df = pd.DataFrame(favoriten)
-if not df.empty:
-    # Optional: Sortieren nach Name oder anderem Feld
-    df = df.sort_values('strDrink')
-    st.dataframe(df[["strDrink", "strInstructions"] + [col for col in df.columns if col.startswith("strIngredient") or col.startswith("strMeasure") or col == "strDrinkThumb"]])
-else:
-    st.info("Keine Favoriten vorhanden.")
+df = df.sort_values('strDrink')
+st.dataframe(df[["strDrink", "strInstructions"]])
 
-# Optional: Bilder und Details in Spalten anzeigen
+# Kartenansicht
 st.markdown("---")
 st.subheader("Favoriten als Karten")
 cols = st.columns(3)
