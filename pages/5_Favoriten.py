@@ -1,109 +1,73 @@
-# ====== Start Login Block ======
-from utils.login_manager import LoginManager
-LoginManager().go_to_login('Start.py') 
-# ====== End Login Block ======
-
 import streamlit as st
 import pandas as pd
 import requests
 import io
 import csv
 from requests.auth import HTTPBasicAuth
-from utils.theme import apply_theme
 
-# --- WebDAV Zugangsdaten ---
+# Login
+from utils.login_manager import LoginManager
+LoginManager().go_to_login('Start.py') 
+
+username = st.session_state.get("username")
+if not username:
+    st.stop()
+
+# WebDAV
 base_url = st.secrets["webdav"]["base_url"]
 webdav_user = st.secrets["webdav"]["username"]
 webdav_password = st.secrets["webdav"]["password"]
+user_path = f"{base_url}/trink_us/user_data_{username}/favoriten.csv"
+auth = HTTPBasicAuth(webdav_user, webdav_password)
 
-# Zustand für dark_mode sicherstellen
-if "dark_mode" not in st.session_state:
-    st.session_state["dark_mode"] = False
-
-apply_theme()
-
-st.title("Ihre Favoriten 🍹")
-
-# Benutzername aus Session holen
-username = st.session_state.get("username")
-if not username:
-    st.error("Bitte zuerst einloggen.")
-    st.stop()
-
-# --- WebDAV-Dateipfad für Benutzer ---
-def get_favoriten_pfad(username):
-    # Achtung: OHNE /files/{user}, direkt ab trink_us
-    return f"{base_url}/trink_us/favoriten_{username}.csv"
-
-# --- Favoriten laden ---
-def favoriten_laden(username):
-    url = get_favoriten_pfad(username)
-    auth = HTTPBasicAuth(webdav_user, webdav_password)
+# Favoriten laden
+def favoriten_laden():
     try:
-        response = requests.get(url, auth=auth)
-        if response.status_code == 200 and response.content:
-            content = response.content.decode("utf-8")
-            reader = csv.DictReader(io.StringIO(content))
-            return list(reader)
-    except Exception as e:
-        st.error(f"Fehler beim Laden der Favoriten: {e}")
+        response = requests.get(user_path, auth=auth)
+        if response.status_code == 200:
+            content = io.StringIO(response.text)
+            return list(csv.DictReader(content))
+    except:
+        pass
     return []
 
-# --- Favoriten speichern ---
-def favoriten_speichern(username, favoriten_liste):
-    url = get_favoriten_pfad(username)
-    auth = HTTPBasicAuth(webdav_user, webdav_password)
-
-    if not favoriten_liste:
-        csv_content = ""
-    else:
-        output = io.StringIO()
-        writer = csv.DictWriter(output, fieldnames=favoriten_liste[0].keys())
-        writer.writeheader()
-        writer.writerows(favoriten_liste)
-        csv_content = output.getvalue()
-
+# Favoriten speichern
+def favoriten_speichern(favs):
     try:
-        response = requests.put(
-            url,
-            data=csv_content.encode("utf-8"),
-            headers={"Content-Type": "text/csv"},
-            auth=auth
-        )
-        if response.status_code not in [200, 201, 204]:
-            st.error(f"Fehler beim Speichern: Status {response.status_code}")
+        if not favs:
+            data = ""
+        else:
+            output = io.StringIO()
+            writer = csv.DictWriter(output, fieldnames=favs[0].keys())
+            writer.writeheader()
+            writer.writerows(favs)
+            data = output.getvalue()
+        requests.put(user_path, data=data.encode("utf-8"), auth=auth)
     except Exception as e:
-        st.error(f"Fehler beim Speichern der Favoriten: {e}")
+        st.error(f"Fehler beim Speichern: {e}")
 
-# --- Favoriten laden ---
-favoriten = favoriten_laden(username)
+# UI
+st.title("Ihre Favoriten 🍹")
+favoriten = favoriten_laden()
 
 if not favoriten:
     st.info("Noch keine Favoriten gespeichert.")
     st.stop()
 
-# --- Favoriten löschen ---
 st.markdown("### Favoriten verwalten")
-favoriten_ids = [f"{f['idDrink']} - {f['strDrink']}" for f in favoriten]
-auswahl = st.multiselect("Favoriten zum Löschen auswählen:", favoriten_ids)
+auswahl = st.multiselect("Favoriten löschen:", [f"{f['idDrink']} - {f['strDrink']}" for f in favoriten])
 
 if st.button("Ausgewählte löschen"):
     favoriten = [f for f in favoriten if f"{f['idDrink']} - {f['strDrink']}" not in auswahl]
-    favoriten_speichern(username, favoriten)
-    st.success("Ausgewählte Favoriten wurden gelöscht.")
+    favoriten_speichern(favoriten)
+    st.success("Favoriten gelöscht.")
     st.experimental_rerun()
 
-# --- CSV-Download ---
+# Download
 csv_download = pd.DataFrame(favoriten).to_csv(index=False).encode("utf-8")
-st.download_button(
-    label="📤 Favoriten als CSV herunterladen",
-    data=csv_download,
-    file_name="meine_favoriten.csv",
-    mime="text/csv"
-)
+st.download_button("📥 CSV herunterladen", csv_download, "favoriten.csv", "text/csv")
 
-# --- Kartenansicht ---
-st.markdown("---")
+# Anzeige als Karten
 st.subheader("Favoriten als Karten")
 cols = st.columns(3)
 for idx, rezept in enumerate(favoriten):
@@ -112,16 +76,16 @@ for idx, rezept in enumerate(favoriten):
         if rezept.get("strDrinkThumb"):
             st.image(rezept["strDrinkThumb"], width=120)
         st.markdown(f"**{rezept.get('strDrink', 'Unbekannter Drink')}**")
-        if st.button("Rezept anzeigen", key=f"details_{idx}"):
+        if st.button("Details anzeigen", key=f"details_{idx}"):
             zutaten = []
             for i in range(1, 16):
                 zutat = rezept.get(f"strIngredient{i}")
                 menge = rezept.get(f"strMeasure{i}")
-                if zutat and zutat.strip():
+                if zutat:
                     zutaten.append(f"- {menge or ''} {zutat}".strip())
             if zutaten:
                 st.markdown("**Zutaten:**")
                 for z in zutaten:
                     st.markdown(z)
             st.markdown("**Zubereitung:**")
-            st.write(rezept.get("strInstructions", "Keine Anleitung vorhanden."))
+            st.write(rezept.get("strInstructions", "Keine Anleitung"))
