@@ -41,10 +41,10 @@ if "fav_df" in st.session_state:
     df = st.session_state.fav_df.copy()
 
     # Duplikate entfernen – z. B. nach strDrink
-    df = df.drop_duplicates(subset="strDrink", keep="first")
+    df = df.drop_duplicates(subset="suchbegriff", keep="first")
 
     # Optional: sortieren
-    df = df.sort_values("strDrink")
+    df = df.sort_values("strDrinksuchbegriff")
 
     # Aktualisieren, wenn du es brauchst:
     # st.session_state.fav_df = df
