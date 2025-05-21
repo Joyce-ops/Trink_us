@@ -64,12 +64,12 @@ def favoriten_speichern(username, favoriten_liste):
     except Exception as e:
         st.error(f"Speicherfehler: {e}")
 
-
 # Cocktail-API-Suche
 def suche_cocktails(suchbegriff):
     url = f"https://www.thecocktaildb.com/api/json/v1/1/search.php?s={suchbegriff}"
     response = requests.get(url)
     if response.status_code == 200:
+
         return response.json().get("drinks", [])
     return []
 
