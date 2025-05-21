@@ -36,25 +36,25 @@ if "fav_df" in st.session_state and not st.session_state.fav_df.empty:
             .reset_index(drop=True)
         )
 
-        st.subheader("Suchbegriffe")
+        
         st.dataframe(suchbegriffe_df, use_container_width=True)
 
         # Auswahl der zu löschenden Suchbegriffe
         to_delete = st.multiselect(
-            "Suchbegriffe zum Löschen auswählen:",
+            "Drink zum Löschen auswählen:",
             options=suchbegriffe_df["Suchbegriff"].tolist()
         )
 
-        if st.button("Ausgewählte Suchbegriffe löschen"):
+        if st.button("Ausgewählten Drink löschen"):
             if to_delete:
                 # Filtere alle Zeilen aus fav_df raus, deren Suchbegriff in to_delete ist
                 new_df = df[~df["Suchbegriff"].isin(to_delete)].reset_index(drop=True)
                 st.session_state.fav_df = new_df  # Update im session_state
 
-                st.success(f"{len(to_delete)} Suchbegriff(e) wurden gelöscht.")
+                st.success(f"{len(to_delete)} Drink(s) wurden gelöscht.")
                 st.experimental_rerun()  # Seite neu laden, damit Tabelle aktualisiert wird
             else:
-                st.warning("Bitte mindestens einen Suchbegriff zum Löschen auswählen.")
+                st.warning("Bitte mindestens einen Drink zum Löschen auswählen.")
     else:
         st.warning("Die Spalte 'Suchbegriff' wurde nicht gefunden.")
 else:
