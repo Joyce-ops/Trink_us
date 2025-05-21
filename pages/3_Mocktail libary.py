@@ -17,28 +17,22 @@ if "dark_mode" not in st.session_state:
 # Theme anwenden
 apply_theme()
 
-# Benutzername aus Login holen
-username = st.session_state.get("username")
-if not username:
-    st.error("Bitte zuerst einloggen!")
-    st.stop()
+st.title("🍹 Mocktail Library")
+st.markdown("<br>", unsafe_allow_html=True)
 
 # WebDAV-Zugangsdaten
 base_url = st.secrets["webdav"]["base_url"]
 user = st.secrets["webdav"]["username"]
 app_passwort = st.secrets["webdav"]["password"]
+remote_favoriten_url = f"{base_url}/files/{user}/data.csv"
 
-# 📁 Benutzerspezifischer Favoritenpfad
-def get_favoriten_pfad(username):
-    return f"{base_url}/files/{user}/trink_us/favoriten_{username}.csv"
-
-# 📥 Favoriten laden
-def favoriten_laden(username):
-    url = get_favoriten_pfad(username)
+# Favoriten aus Switch Drive laden (CSV)
+def favoriten_laden():
     try:
-        response = requests.get(url, auth=HTTPBasicAuth(user, app_passwort))
+        response = requests.get(remote_favoriten_url, auth=HTTPBasicAuth(user, app_passwort))
         if response.status_code == 200:
-            reader = csv.DictReader(io.StringIO(response.text))
+            csvfile = io.StringIO(response.text)
+            reader = csv.DictReader(csvfile)
             return list(reader)
         else:
             return []
@@ -46,27 +40,34 @@ def favoriten_laden(username):
         st.error(f"Fehler beim Laden der Favoriten: {e}")
         return []
 
-# 💾 Favoriten speichern
-def favoriten_speichern(username, favoriten_liste):
-    url = get_favoriten_pfad(username)
-    output = io.StringIO()
-    fieldnames = favoriten_liste[0].keys() if favoriten_liste else ["idDrink", "strDrink"]
-    writer = csv.DictWriter(output, fieldnames=fieldnames)
-    writer.writeheader()
-    writer.writerows(favoriten_liste)
+# Favoriten als CSV speichern
+def favoriten_speichern(favoriten):
     try:
+        if not favoriten:
+            csv_content = ""
+        else:
+            output = io.StringIO()
+            fieldnames = favoriten[0].keys()
+            writer = csv.DictWriter(output, fieldnames=fieldnames)
+            writer.writeheader()
+            for fav in favoriten:
+                writer.writerow(fav)
+            csv_content = output.getvalue()
         response = requests.put(
-            url,
-            data=output.getvalue().encode("utf-8"),
+            remote_favoriten_url,
+            data=csv_content.encode("utf-8"),
             headers={"Content-Type": "text/csv"},
             auth=HTTPBasicAuth(user, app_passwort)
         )
-        if response.status_code not in [200, 201, 204]:
-            st.error(f"Speichern fehlgeschlagen: {response.status_code}")
+        if response.status_code not in (200, 201, 204):
+            st.error(f"Fehler beim Speichern der Favoriten: {response.status_code}")
     except Exception as e:
         st.error(f"Fehler beim Speichern der Favoriten: {e}")
 
-# 🔎 Mocktails suchen
+# Favoriten initialisieren
+favoriten = favoriten_laden()
+
+# Funktion: Mocktails aus der API suchen
 def suche_mocktails(suchbegriff=None):
     url = f"https://www.thecocktaildb.com/api/json/v1/1/filter.php?a=Non_Alcoholic"
     response = requests.get(url)
@@ -80,7 +81,7 @@ def suche_mocktails(suchbegriff=None):
         st.error("Fehler beim Abrufen der Mocktails. Bitte versuche es später erneut.")
         return []
 
-# 🔍 Details zu einem Mocktail
+# Funktion: Details eines Mocktails abrufen
 def mocktail_details(mocktail_id):
     url = f"https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i={mocktail_id}"
     response = requests.get(url)
@@ -88,10 +89,10 @@ def mocktail_details(mocktail_id):
         data = response.json()
         return data.get("drinks", [])[0]
     else:
-        st.error("Fehler beim Abrufen der Mocktail-Details.")
+        st.error("Fehler beim Abrufen der Mocktail-Details. Bitte versuche es später erneut.")
         return None
 
-# CSS-Styling
+# CSS für größere Mocktail-Namen und zentrierte Rezepttexte
 st.markdown(
     """
     <style>
@@ -122,16 +123,11 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Titel & UI
-st.title("🍹 Mocktail Library")
-st.markdown("<br>", unsafe_allow_html=True)
+# Suchleiste für Mocktails
 st.markdown('<label class="search-label">🔍 Suche nach einem Mocktail:</label>', unsafe_allow_html=True)
 suchbegriff = st.text_input("", placeholder="Gib einen Mocktailnamen ein...")
 
-# Favoriten initialisieren
-favoriten = favoriten_laden(username)
-
-# Anzeige der Suchergebnisse
+# Mocktails suchen und anzeigen
 mocktails = suche_mocktails(suchbegriff)
 if mocktails:
     st.subheader("Mocktail Vorschläge ✨")
@@ -157,19 +153,20 @@ if mocktails:
                         st.markdown(f"<p class='recipe-text'>{details.get('strInstructions', 'Keine Zubereitungsanweisungen verfügbar.')}</p>", unsafe_allow_html=True)
             if st.button("Zu Favoriten hinzufügen", key=f"add_fav_{mocktail['idDrink']}"):
                 if not any(fav.get("idDrink") == mocktail["idDrink"] for fav in favoriten):
+                    # Hole alle Details für die Speicherung
                     details = mocktail_details(mocktail["idDrink"])
                     if details:
                         fav_dict = {
                             "idDrink": details.get("idDrink"),
                             "strDrink": details.get("strDrink"),
                             "strDrinkThumb": details.get("strDrinkThumb"),
-                            "strInstructions": details.get("strInstructions") or "",
+                            "strInstructions": details.get("strInstructions"),
                         }
                         for i in range(1, 16):
-                            fav_dict[f"strIngredient{i}"] = details.get(f"strIngredient{i}") or ""
-                            fav_dict[f"strMeasure{i}"] = details.get(f"strMeasure{i}") or ""
+                            fav_dict[f"strIngredient{i}"] = details.get(f"strIngredient{i}")
+                            fav_dict[f"strMeasure{i}"] = details.get(f"strMeasure{i}")
                         favoriten.append(fav_dict)
-                        favoriten_speichern(username, favoriten)
+                        favoriten_speichern(favoriten)
                         st.success(f"'{details['strDrink']}' wurde zu den Favoriten hinzugefügt!")
                 else:
                     st.warning(f"'{mocktail['strDrink']}' ist bereits in den Favoriten.")
