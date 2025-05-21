@@ -10,15 +10,9 @@ import csv
 from requests.auth import HTTPBasicAuth
 from utils.theme import apply_theme
 
-# Zustand für dark_mode sicherstellen
-if "dark_mode" not in st.session_state:
-    st.session_state["dark_mode"] = False
 
-# Theme anwenden
-apply_theme()
 
 st.title("🍹 Mocktail Library")
-st.markdown("<br>", unsafe_allow_html=True)
 
 # WebDAV-Zugangsdaten
 base_url = st.secrets["webdav"]["base_url"]
@@ -92,7 +86,7 @@ def mocktail_details(mocktail_id):
         st.error("Fehler beim Abrufen der Mocktail-Details. Bitte versuche es später erneut.")
         return None
 
-# CSS für größere Mocktail-Namen und zentrierte Rezepttexte
+# CSS für größere Mocktail-Namen und zentrierte Rezepttexte (kein Hintergrund!)
 st.markdown(
     """
     <style>
