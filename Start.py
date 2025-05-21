@@ -7,7 +7,7 @@ from utils.login_manager import LoginManager
 import streamlit as st
 
 # initialize the data manager
-data_manager = DataManager(fs_protocol='webdav', fs_root_folder="Trink us")  # switch drive 
+data_manager = DataManager(fs_protocol='webdav', fs_root_folder="Trink_us")  # switch drive 
 
 # initialize the login manager
 login_manager = LoginManager(data_manager)
@@ -15,11 +15,12 @@ login_manager.login_register()  # open login/register page
 
 # load the data from the persistent storage into the session state
 data_manager.load_user_data(
-    session_state_key='data_df', 
-    file_name='data.csv', 
+    session_state_key='fav_df', 
+    file_name='favoriten.csv', 
     initial_value = pd.DataFrame(), 
     parse_dates = ['timestamp']
     )
+
 # ====== End Init Block ======
 # Theme-Funktion: Hell/Dunkel-Modus
 # ==============================

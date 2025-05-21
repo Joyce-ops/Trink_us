@@ -3,6 +3,9 @@ from utils.login_manager import LoginManager
 LoginManager().go_to_login('cocktail_suche.py')
 # ====== End Login Block ======
 
+from utils.data_manager import DataManager
+from utils.helpers import ch_now
+
 import streamlit as st
 import requests
 import io
@@ -76,6 +79,12 @@ with st.form("cocktail_suche_form"):
     submitted = st.form_submit_button("Suchen")
 
 if submitted and suchbegriff:
+    record = {
+        "timestamp":ch_now(),
+        "Suchbegriff": suchbegriff
+    }
+    DataManager().append_record('fav_df', record)
+
     cocktails = suche_cocktails(suchbegriff)
     favoriten = favoriten_laden(username)
 
@@ -98,7 +107,9 @@ if submitted and suchbegriff:
                         st.write(f"{idx}. {step.strip()}")
 
             # ⭐ Favoriten-Button
+            print(f"Favorit: {cocktail['strDrink']}")
             if st.button(f"⭐ Zu Favoriten: {cocktail['strDrink']}", key=f"fav_{cocktail['idDrink']}"):
+                print(f"Favorit 2: {cocktail['strDrink']}")
                 if not any(f.get("idDrink") == cocktail["idDrink"] for f in favoriten):
                     fav_dict = {
                         "idDrink": cocktail["idDrink"],
@@ -110,6 +121,7 @@ if submitted and suchbegriff:
                         fav_dict[f"strIngredient{i}"] = cocktail.get(f"strIngredient{i}") or ""
                         fav_dict[f"strMeasure{i}"] = cocktail.get(f"strMeasure{i}") or ""
                     favoriten.append(fav_dict)
+                    print(fav_dict)
                     favoriten_speichern(username, favoriten)
                     st.success(f"'{cocktail['strDrink']}' wurde gespeichert!")
                 else:
