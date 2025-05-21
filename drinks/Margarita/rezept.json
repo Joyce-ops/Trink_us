@@ -1,0 +1,36 @@
+{
+    "name": "Margarita",
+    "category": "Cocktail",
+    "glass": "Cocktailglas",
+    "ingredients": [
+        {
+            "name": "Tequila",
+            "amount": 5,
+            "unit": "cl"
+        },
+        {
+            "name": "Cointreau (oder Triple Sec)",
+            "amount": 2,
+            "unit": "cl"
+        },
+        {
+            "name": "Limettensaft",
+            "amount": 3,
+            "unit": "cl"
+        },
+        {
+            "name": "Salz",
+            "amount": null,
+            "unit": "zum Glasrand"
+        }
+    ],
+    "garnish": "Limettenscheibe",
+    "instructions": [
+        "Cocktailglas mit Salzrand vorbereiten.",
+        "Alle Zutaten mit Eiswürfeln in einen Shaker geben.",
+        "Kräftig schütteln.",
+        "In das vorbereitete Glas abseihen.",
+        "Mit Limettenscheibe garnieren."
+    ],
+    "alcoholic": true
+}

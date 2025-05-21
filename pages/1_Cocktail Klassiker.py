@@ -69,9 +69,9 @@ if os.path.exists(csv_path):
                             else:
                                 st.write("- Unbekannte Zutat")
                         
-                        st.write("### 📖 Zubereitung:")
+                        st.write("### Zubereitung:")
                         instructions = recipe_content.get("instructions", "Keine Anweisungen verfügbar.")
-                        st.markdown(f"<span style='color:green;'>{instructions}</span>", unsafe_allow_html=True)
+                        st.markdown(f"<span style='color:orange;'>{instructions}</span>", unsafe_allow_html=True)
                     else:
                         st.warning(f"Kein Rezept für {drink_name} gefunden: {recipe_path}")
         
