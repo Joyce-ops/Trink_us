@@ -9,6 +9,8 @@ import io
 import csv
 from requests.auth import HTTPBasicAuth
 from utils.theme import apply_theme
+from utils.data_manager import DataManager  # Neu hinzugefügt
+from utils.time_utils import ch_now         # Neu hinzugefügt
 
 # Zustand für dark_mode sicherstellen
 if "dark_mode" not in st.session_state:
@@ -63,9 +65,6 @@ def favoriten_speichern(favoriten):
             st.error(f"Fehler beim Speichern der Favoriten: {response.status_code}")
     except Exception as e:
         st.error(f"Fehler beim Speichern der Favoriten: {e}")
-
-# Favoriten initialisieren
-favoriten = favoriten_laden()
 
 # Funktion: Mocktails aus der API suchen
 def suche_mocktails(suchbegriff=None):
@@ -127,8 +126,25 @@ st.markdown(
 st.markdown('<label class="search-label">🔍 Suche nach einem Mocktail:</label>', unsafe_allow_html=True)
 suchbegriff = st.text_input("", placeholder="Gib einen Mocktailnamen ein...")
 
-# Mocktails suchen und anzeigen
-mocktails = suche_mocktails(suchbegriff)
+# Suche durchführen und ggf. Suchbegriff speichern
+if suchbegriff:
+    # Suche speichern in Session + protokollieren
+    mocktails = suche_mocktails(suchbegriff)
+    st.session_state["cocktails"] = mocktails
+
+    # Protokolliere den Suchbegriff mit Timestamp
+    record = {
+        "timestamp": ch_now(),
+        "Suchbegriff": suchbegriff
+    }
+    DataManager().append_record('fav_df', record)
+else:
+    mocktails = suche_mocktails()
+
+# Favoriten initialisieren
+favoriten = favoriten_laden()
+
+# Mocktails anzeigen
 if mocktails:
     st.subheader("Mocktail Vorschläge ✨")
     for idx, mocktail in enumerate(mocktails):

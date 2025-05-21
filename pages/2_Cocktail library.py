@@ -1,7 +1,7 @@
 # ====== Start Login Block ======
 from utils.login_manager import LoginManager
-LoginManager().go_to_login('cocktail_suche.py')
-# ====== End Login Block ======
+LoginManager().go_to_login('Start.py') 
+# ====== End Login Block ====== 
 
 from utils.data_manager import DataManager
 from utils.helpers import ch_now
@@ -63,7 +63,7 @@ def favoriten_speichern(username, favoriten_liste):
             st.error(f"Speichern fehlgeschlagen: {response.status_code}")
     except Exception as e:
         st.error(f"Speicherfehler: {e}")
-###
+
 
 # Cocktail-API-Suche
 def suche_cocktails(suchbegriff):
@@ -140,4 +140,130 @@ if "cocktails" in st.session_state:
                 else:
                     st.warning(f"'{cocktail['strDrink']}' ist bereits gespeichert.")
     else:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         st.warning("Kein Cocktail gefunden.")
