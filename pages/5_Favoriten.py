@@ -44,13 +44,13 @@ if "fav_df" in st.session_state and not st.session_state.fav_df.empty:
     df = st.session_state.fav_df
 
     # Nur die Spalte mit Suchbegriffen (z. B. Drink-Namen)
-    if "strDrink" in df.columns:
-        suchbegriffe_df = df[["strDrink"]].drop_duplicates().sort_values("strDrink").reset_index(drop=True)
+    if "Suchbegriff" in df.columns:
+        suchbegriffe_df = df[["Suchbegriff"]].drop_duplicates().sort_values("Suchbegriff").reset_index(drop=True)
 
         st.subheader("Einzigartige Suchbegriffe")
         st.dataframe(suchbegriffe_df, use_container_width=True)
     else:
-        st.warning("Die Spalte 'strDrink' wurde nicht gefunden.")
+        st.warning("Die Spalte 'Suchbegriff' wurde nicht gefunden.")
 else:
     st.info("Keine Favoriten gefunden.")
 
