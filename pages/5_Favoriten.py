@@ -4,7 +4,11 @@ LoginManager().go_to_login('favoriten.py')
 # ====== End Login Block ======
 
 import streamlit as st
+import requests
+import csv
+import io
 import pandas as pd
+from requests.auth import HTTPBasicAuth
 from utils.theme import apply_theme
 
 # Theme
@@ -18,42 +22,34 @@ if not username:
     st.error("Bitte zuerst einloggen!")
     st.stop()
 
+# WebDAV-Zugang
+base_url = st.secrets["webdav"]["base_url"]
+user = st.secrets["webdav"]["username"]
+password = st.secrets["webdav"]["password"]
+
+# Pfad dynamisch
+def get_favoriten_url(username):
+    return f"{base_url}/files/{user}/trink_us/favoriten_{username}.csv"
+
 # Titel
-st.title("🔍 Ihre Suchbegriffe")
+st.title("Ihre Favoriten 🍹")
 
-# Beispiel-Datenstruktur: search_df mit Timestamp und Suchbegriff
-# Diese muss an anderer Stelle mit neuen Einträgen befüllt werden
-if "search_df" in st.session_state and not st.session_state.search_df.empty:
-    df = st.session_state.search_df.copy()
+# ------------------------------
+# Duplikate entfernen nach strDrink (kann angepasst werden)
+# ------------------------------
+if "fav_df" in st.session_state:
+    df = st.session_state.fav_df.copy()
 
-    # timestamp als datetime, falls nötig
-    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    # Duplikate entfernen – z. B. nach strDrink
+    df = df.drop_duplicates(subset="strDrink", keep="first")
 
-    # Duplikate nach suchbegriff entfernen – nur der neueste bleibt
-    df = df.sort_values("timestamp", ascending=False).drop_duplicates(subset=["suchbegriff"])
+    # Optional: sortieren
+    df = df.sort_values("strDrink")
 
-    # Optional: nach Zeit sortieren
-    df = df.sort_values("timestamp", ascending=False)
+    # Aktualisieren, wenn du es brauchst:
+    # st.session_state.fav_df = df
 
-    # Nur die Spalten zeigen, die gewünscht sind
-    st.dataframe(df[["timestamp", "suchbegriff"]], use_container_width=True)
+    # Anzeige
+    st.dataframe(df, use_container_width=True)
 else:
-    st.info("Noch keine Suchbegriffe vorhanden.")
-
-from datetime import datetime
-
-suchbegriff = st.text_input("Suchbegriff eingeben")
-if suchbegriff:
-    new_entry = pd.DataFrame([{
-        "timestamp": datetime.now(),
-        "suchbegriff": suchbegriff.strip()
-    }])
-
-    if "search_df" not in st.session_state:
-        st.session_state.search_df = new_entry
-    else:
-        st.session_state.search_df = pd.concat([st.session_state.search_df, new_entry], ignore_index=True)
-
-
-
-
+    st.info("Keine Favoriten gefunden.")
