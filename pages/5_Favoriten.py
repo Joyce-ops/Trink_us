@@ -35,7 +35,8 @@ st.title("Ihre Favoriten 🍹")
 # ------------------------------
 # Duplikate entfernen nach strDrink (kann angepasst werden)
 # ------------------------------
-st.title("Ihre Favoriten 🍹")
+
+
 
 # Sicherstellen, dass die Favoriten-Daten vorhanden sind
 if "fav_df" in st.session_state and not st.session_state.fav_df.empty:
@@ -46,7 +47,7 @@ if "fav_df" in st.session_state and not st.session_state.fav_df.empty:
         suchbegriffe_df = (
             df[["Suchbegriff"]]
             .dropna(subset=["Suchbegriff"])  # Entfernt NaN-Werte
-            .query("Suchbegriff != ''")      # Entfernt leere Strings
+            .query("Suchbegriff != 'none'")      # Entfernt leere Strings
             .drop_duplicates()
             .sort_values("Suchbegriff")
             .reset_index(drop=True)
