@@ -117,8 +117,9 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Suchleiste für Mocktails
-suchbegriff = st.text_input("", placeholder="Gib einen Mocktailnamen ein...")
+with st.form("cocktail_suche_form"):
+    suchbegriff = st.text_input("🔍 Suche nach einem Cocktail:", placeholder="Gib einen Mocktailnamen ein...")
+    submitted = st.form_submit_button("Suchen")
 
 # Username aus Session holen
 username = st.session_state.get("username", user)
