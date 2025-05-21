@@ -21,10 +21,12 @@ if not username:
 # Titel
 st.title("Ihre Favoriten 🍹")
 
+# Sicherstellen, dass die Favoriten-Daten vorhanden sind
 if "fav_df" in st.session_state and not st.session_state.fav_df.empty:
     df = st.session_state.fav_df.copy()
 
     if "Suchbegriff" in df.columns:
+        # Filter und Duplikate entfernen
         suchbegriffe_df = (
             df[["Suchbegriff"]]
             .dropna(subset=["Suchbegriff"])
@@ -34,27 +36,25 @@ if "fav_df" in st.session_state and not st.session_state.fav_df.empty:
             .reset_index(drop=True)
         )
 
-        st.subheader("Suchbegriffe bearbeiten oder löschen")
+        st.subheader("Suchbegriffe")
+        st.dataframe(suchbegriffe_df, use_container_width=True)
 
-        edited_df = st.experimental_data_editor(
-            suchbegriffe_df,
-            num_rows="dynamic",  # erlaubt Löschen von Zeilen
-            key="suchbegriff_editor"
+        # Auswahl der zu löschenden Suchbegriffe
+        to_delete = st.multiselect(
+            "Suchbegriffe zum Löschen auswählen:",
+            options=suchbegriffe_df["Suchbegriff"].tolist()
         )
 
-        # Wenn Zeilen gelöscht oder geändert wurden, update die fav_df entsprechend
-        if not edited_df.equals(suchbegriffe_df):
-            # gefilterte Suchbegriffe, die noch in der bearbeiteten Tabelle sind
-            verbleibende_begriffe = set(edited_df["Suchbegriff"].dropna().str.strip())
+        if st.button("Ausgewählte Suchbegriffe löschen"):
+            if to_delete:
+                # Filtere alle Zeilen aus fav_df raus, deren Suchbegriff in to_delete ist
+                new_df = df[~df["Suchbegriff"].isin(to_delete)].reset_index(drop=True)
+                st.session_state.fav_df = new_df  # Update im session_state
 
-            # Update st.session_state.fav_df: nur Reihen behalten, deren Suchbegriff noch vorhanden ist
-            new_df = df[df["Suchbegriff"].isin(verbleibende_begriffe)].reset_index(drop=True)
-            st.session_state.fav_df = new_df
-
-            st.success("Favoritenliste wurde aktualisiert!")
-
-        st.dataframe(edited_df, use_container_width=True)
-
+                st.success(f"{len(to_delete)} Suchbegriff(e) wurden gelöscht.")
+                st.experimental_rerun()  # Seite neu laden, damit Tabelle aktualisiert wird
+            else:
+                st.warning("Bitte mindestens einen Suchbegriff zum Löschen auswählen.")
     else:
         st.warning("Die Spalte 'Suchbegriff' wurde nicht gefunden.")
 else:
