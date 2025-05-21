@@ -30,10 +30,8 @@ password = st.secrets["webdav"]["password"]
 # Pfad dynamisch
 def get_favoriten_url(username):
     return f"{base_url}/files/{user}/trink_us/favoriten_{username}.csv"
-
 # Titel
 st.title("Ihre Favoriten 🍹")
-
 # ------------------------------
 # Duplikate entfernen nach strDrink (kann angepasst werden)
 # ------------------------------
@@ -45,7 +43,14 @@ if "fav_df" in st.session_state and not st.session_state.fav_df.empty:
 
     # Nur die Spalte mit Suchbegriffen (z. B. Drink-Namen)
     if "Suchbegriff" in df.columns:
-        suchbegriffe_df = df[["Suchbegriff"]].drop_duplicates().sort_values("Suchbegriff").reset_index(drop=True)
+        suchbegriffe_df = (
+            df[["Suchbegriff"]]
+            .dropna(subset=["Suchbegriff"])  # Entfernt NaN-Werte
+            .query("Suchbegriff != ''")      # Entfernt leere Strings
+            .drop_duplicates()
+            .sort_values("Suchbegriff")
+            .reset_index(drop=True)
+        )
 
         st.subheader("Einzigartige Suchbegriffe")
         st.dataframe(suchbegriffe_df, use_container_width=True)
@@ -53,4 +58,3 @@ if "fav_df" in st.session_state and not st.session_state.fav_df.empty:
         st.warning("Die Spalte 'Suchbegriff' wurde nicht gefunden.")
 else:
     st.info("Keine Favoriten gefunden.")
-
