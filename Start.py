@@ -128,7 +128,7 @@ st.markdown("Willkommen bei Trink us. Bei uns findest du zahlreiche Cocktails, d
 
 # Hinweis zum Alkoholkonsum
 st.info("""
-######*❗Hinweis zum Alkoholkonsum:❗*  
+####*❗Hinweis zum Alkoholkonsum:❗*  
 Diese Cocktailrezepte enthalten alkoholische Zutaten.  
 Wenn du noch nicht volljährig bist, empfehlen wir dir, die Rezepte ohne Alkohol zuzubereiten als leckere Mocktail-Variante!  
 Genieße verantwortungsvoll und altersgerecht. 🍸✨
