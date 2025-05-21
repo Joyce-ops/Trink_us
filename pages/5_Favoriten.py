@@ -32,28 +32,29 @@ def get_favoriten_url(username):
     return f"{base_url}/files/{user}/trink_us/favoriten_{username}.csv"
 # Titel
 st.title("Ihre Favoriten 🍹")
+# ------------------------------
+# Duplikate entfernen nach strDrink (kann angepasst werden)
+# ------------------------------
 
+
+# Sicherstellen, dass die Favoriten-Daten vorhanden sind
 if "fav_df" in st.session_state and not st.session_state.fav_df.empty:
-    df = st.session_state.fav_df.copy()
+    df = st.session_state.fav_df
 
+    # Nur die Spalte mit Suchbegriffen (z. B. Drink-Namen)
     if "Suchbegriff" in df.columns:
-        # Nur gültige, nicht-leere Einträge behalten
-        filtered_df = df[df["Suchbegriff"].notna() & (df["Suchbegriff"].str.strip() != "")].copy()
+        suchbegriffe_df = (
+            df[["Suchbegriff"]]
+            .dropna(subset=["Suchbegriff"])  # Entfernt NaN-Werte
+            .query("Suchbegriff != 'none'")      # Entfernt leere Strings
+            .drop_duplicates()
+            .sort_values("Suchbegriff")
+            .reset_index(drop=True)
+        )
 
-        # Hilfsspalte mit kleingeschriebener Version für Duplikaterkennung
-        filtered_df["suchbegriff_lower"] = filtered_df["Suchbegriff"].str.lower().str.strip()
-
-        # Gruppieren und die bevorzugte Version behalten (hier: alphabetisch größte Version)
-        filtered_df = filtered_df.sort_values("Suchbegriff", ascending=False)
-        grouped_df = filtered_df.drop_duplicates(subset="suchbegriff_lower", keep="first")
-
-        # Spalte für Anzeige sortieren und index zurücksetzen
-        grouped_df = grouped_df.drop(columns="suchbegriff_lower").sort_values("Suchbegriff").reset_index(drop=True)
-
-        st.subheader("Einzigartige Suchbegriffe (Groß-/Kleinschreibung berücksichtigt, klein geschriebene entfernt)")
-        st.dataframe(grouped_df[["Suchbegriff"]], use_container_width=True)
+        st.subheader("Einzigartige Suchbegriffe")
+        st.dataframe(suchbegriffe_df, use_container_width=True)
     else:
         st.warning("Die Spalte 'Suchbegriff' wurde nicht gefunden.")
 else:
     st.info("Keine Favoriten gefunden.")
-
