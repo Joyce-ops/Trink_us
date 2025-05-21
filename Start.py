@@ -68,6 +68,8 @@ def apply_theme():
         [data-testid="stForm"],
         .stMarkdown, .stText, .stTitle, .stSubheader {{
             color: {text_color} !important;
+            font-weight: 700 !important;   /* jetzt richtig fett */
+            font-size: 1.08em !important;  /* etwas größer */
         }}
 
         /* Info-Boxen */
@@ -122,7 +124,7 @@ st.title('Cocktail Rezepte')
 # Begrüßung des Benutzers
 name = st.session_state.get('name', 'Gast')
 st.markdown(f"✨ Hallo {name}! ✨")
-st.markdown("Willkommen bei Trink us. Bei uns findest du zahlreiche Cocktails, die deinen Abend unvergesslich und geschmacksvoll machen. Für jeden Cocktail-Enthusiast ist etwas dabei!! 🍹")
+st.markdown("Willkommen bei Trink us. Bei uns findest du zahlreiche Cocktails, die deinen Abend unvergesslich und geschmacksvoll machen. Für jeden Cocktail-Enthusiast ist etwas dabei!!")
 
 # Hinweis zum Alkoholkonsum
 st.info("""
