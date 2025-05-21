@@ -37,19 +37,20 @@ st.title("Ihre Favoriten 🍹")
 # ------------------------------
 # Duplikate entfernen nach strDrink (kann angepasst werden)
 # ------------------------------
-if "fav_df" in st.session_state:
-    df = st.session_state.fav_df.copy()
+st.title("Ihre Favoriten 🍹")
 
-    # Duplikate entfernen – z. B. nach strDrink
-    df = df.drop_duplicates(subset="suchbegriff", keep="first")
+# Sicherstellen, dass die Favoriten-Daten vorhanden sind
+if "fav_df" in st.session_state and not st.session_state.fav_df.empty:
+    df = st.session_state.fav_df
 
-    # Optional: sortieren
-    df = df.sort_values("strDrinksuchbegriff")
+    # Nur die Spalte mit Suchbegriffen (z. B. Drink-Namen)
+    if "strDrink" in df.columns:
+        suchbegriffe_df = df[["strDrink"]].drop_duplicates().sort_values("strDrink").reset_index(drop=True)
 
-    # Aktualisieren, wenn du es brauchst:
-    # st.session_state.fav_df = df
-
-    # Anzeige
-    st.dataframe(df, use_container_width=True)
+        st.subheader("Einzigartige Suchbegriffe")
+        st.dataframe(suchbegriffe_df, use_container_width=True)
+    else:
+        st.warning("Die Spalte 'strDrink' wurde nicht gefunden.")
 else:
     st.info("Keine Favoriten gefunden.")
+
