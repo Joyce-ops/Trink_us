@@ -23,6 +23,7 @@ if not username:
     st.error("Bitte zuerst einloggen!")
     st.stop()
 
+#nochmals anschauen
 # 🔁 Favoriten-Pfad (benutzerspezifisch)
 def get_favoriten_pfad(username):
     return f"{base_url}/files/{webdav_user}/trink_us/favoriten_{username}.csv"
@@ -62,6 +63,7 @@ def favoriten_speichern(username, favoriten_liste):
             st.error(f"Speichern fehlgeschlagen: {response.status_code}")
     except Exception as e:
         st.error(f"Speicherfehler: {e}")
+###
 
 # Cocktail-API-Suche
 def suche_cocktails(suchbegriff):
@@ -74,18 +76,24 @@ def suche_cocktails(suchbegriff):
 # UI
 st.title("🍹 Cocktail Library")
 
+
 with st.form("cocktail_suche_form"):
     suchbegriff = st.text_input("🔍 Suche nach einem Cocktail:", placeholder="Gib einen Namen ein...")
     submitted = st.form_submit_button("Suchen")
 
 if submitted and suchbegriff:
+    cocktails = suche_cocktails(suchbegriff)
+    st.session_state["cocktails"] = cocktails
+
+if "cocktails" in st.session_state:
+    cocktails = st.session_state["cocktails"]
+
     record = {
         "timestamp":ch_now(),
         "Suchbegriff": suchbegriff
     }
     DataManager().append_record('fav_df', record)
 
-    cocktails = suche_cocktails(suchbegriff)
     favoriten = favoriten_laden(username)
 
     if cocktails:
@@ -107,9 +115,15 @@ if submitted and suchbegriff:
                         st.write(f"{idx}. {step.strip()}")
 
             # ⭐ Favoriten-Button
-            print(f"Favorit: {cocktail['strDrink']}")
-            if st.button(f"⭐ Zu Favoriten: {cocktail['strDrink']}", key=f"fav_{cocktail['idDrink']}"):
-                print(f"Favorit 2: {cocktail['strDrink']}")
+            if st.button(f"⭐ Zu Favoriten hinzufügen", key=f"fav_{cocktail['idDrink']}"):
+                record = {
+                    "timestamp":ch_now(),
+                    "Suchbegriff": cocktail['strDrink']
+                }
+                DataManager().append_record('fav_df', record)
+                print(f"Saved: {cocktail['strDrink']}")
+
+                # -------------
                 if not any(f.get("idDrink") == cocktail["idDrink"] for f in favoriten):
                     fav_dict = {
                         "idDrink": cocktail["idDrink"],
@@ -121,7 +135,6 @@ if submitted and suchbegriff:
                         fav_dict[f"strIngredient{i}"] = cocktail.get(f"strIngredient{i}") or ""
                         fav_dict[f"strMeasure{i}"] = cocktail.get(f"strMeasure{i}") or ""
                     favoriten.append(fav_dict)
-                    print(fav_dict)
                     favoriten_speichern(username, favoriten)
                     st.success(f"'{cocktail['strDrink']}' wurde gespeichert!")
                 else:
