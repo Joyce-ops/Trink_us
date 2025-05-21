@@ -32,29 +32,27 @@ def get_favoriten_url(username):
     return f"{base_url}/files/{user}/trink_us/favoriten_{username}.csv"
 # Titel
 st.title("Ihre Favoriten 🍹")
-# ------------------------------
-# Duplikate entfernen nach strDrink (kann angepasst werden)
-# ------------------------------
-
-
-
 # Sicherstellen, dass die Favoriten-Daten vorhanden sind
 if "fav_df" in st.session_state and not st.session_state.fav_df.empty:
     df = st.session_state.fav_df
 
-    # Nur die Spalte mit Suchbegriffen (z. B. Drink-Namen)
+    # Nur die Spalte mit Suchbegriffen
     if "Suchbegriff" in df.columns:
-        suchbegriffe_df = (
-            df[["Suchbegriff"]]
-            .dropna(subset=["Suchbegriff"])  # Entfernt NaN-Werte
-            .query("Suchbegriff != 'none'")      # Entfernt leere Strings
-            .drop_duplicates()
-            .sort_values("Suchbegriff")
-            .reset_index(drop=True)
-        )
+        # Schritt 1: Nur gültige, nicht-leere Einträge
+        filtered_df = df[["Suchbegriff"]].dropna(subset=["Suchbegriff"])
+        filtered_df = filtered_df[filtered_df["Suchbegriff"].str.strip() != ""]
 
-        st.subheader("Einzigartige Suchbegriffe")
-        st.dataframe(suchbegriffe_df, use_container_width=True)
+        # Schritt 2: Hilfsspalte für Duplikaterkennung (kleingeschrieben)
+        filtered_df["suchbegriff_lower"] = filtered_df["Suchbegriff"].str.lower().str.strip()
+
+        # Schritt 3: Duplikate anhand der Kleinschreibweise entfernen (erstes Vorkommen bleibt)
+        unique_df = filtered_df.drop_duplicates(subset="suchbegriff_lower").drop(columns="suchbegriff_lower")
+
+        # Schritt 4: Sortieren und Anzeigen
+        unique_df = unique_df.sort_values("Suchbegriff").reset_index(drop=True)
+
+        st.subheader("Einzigartige Suchbegriffe (Groß-/Kleinschreibung ignoriert)")
+        st.dataframe(unique_df, use_container_width=True)
     else:
         st.warning("Die Spalte 'Suchbegriff' wurde nicht gefunden.")
 else:
