@@ -33,33 +33,27 @@ def get_favoriten_url(username):
 # Titel
 st.title("Ihre Favoriten 🍹")
 
-# Sicherstellen, dass die Favoriten-Daten vorhanden sind
 if "fav_df" in st.session_state and not st.session_state.fav_df.empty:
-    df = st.session_state.fav_df
+    df = st.session_state.fav_df.copy()
 
-    # Nur die Spalte mit Suchbegriffen
     if "Suchbegriff" in df.columns:
-        # Schritt 1: Nur gültige, nicht-leere Einträge
-        filtered_df = df[["Suchbegriff"]].dropna(subset=["Suchbegriff"])
-        filtered_df = filtered_df[filtered_df["Suchbegriff"].str.strip() != ""]
+        # Nur gültige, nicht-leere Einträge behalten
+        filtered_df = df[df["Suchbegriff"].notna() & (df["Suchbegriff"].str.strip() != "")].copy()
 
-        # Schritt 2: Hilfsspalte mit kleingeschriebener Version zur Duplikaterkennung
+        # Hilfsspalte mit kleingeschriebener Version für Duplikaterkennung
         filtered_df["suchbegriff_lower"] = filtered_df["Suchbegriff"].str.lower().str.strip()
 
-        # Schritt 3: Gruppieren nach kleingeschriebener Form, und bevorzugt "richtige" Schreibweise behalten
-        # Wir nehmen pro Gruppe den Suchbegriff mit Großbuchstaben (der zuerst vorkommt)
-        grouped_df = (
-            filtered_df.sort_values("Suchbegriff", ascending=False)
-            .drop_duplicates(subset="suchbegriff_lower")
-            .drop(columns="suchbegriff_lower")
-        )
+        # Gruppieren und die bevorzugte Version behalten (hier: alphabetisch größte Version)
+        filtered_df = filtered_df.sort_values("Suchbegriff", ascending=False)
+        grouped_df = filtered_df.drop_duplicates(subset="suchbegriff_lower", keep="first")
 
-        # Schritt 4: Sortieren & Anzeigen
-        grouped_df = grouped_df.sort_values("Suchbegriff").reset_index(drop=True)
+        # Spalte für Anzeige sortieren und index zurücksetzen
+        grouped_df = grouped_df.drop(columns="suchbegriff_lower").sort_values("Suchbegriff").reset_index(drop=True)
 
-        st.subheader("Einzigartige Suchbegriffe (nur korrekt geschriebene)")
-        st.dataframe(grouped_df, use_container_width=True)
+        st.subheader("Einzigartige Suchbegriffe (Groß-/Kleinschreibung berücksichtigt, klein geschriebene entfernt)")
+        st.dataframe(grouped_df[["Suchbegriff"]], use_container_width=True)
     else:
         st.warning("Die Spalte 'Suchbegriff' wurde nicht gefunden.")
 else:
     st.info("Keine Favoriten gefunden.")
+
