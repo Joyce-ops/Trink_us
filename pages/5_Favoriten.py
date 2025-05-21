@@ -32,6 +32,7 @@ def get_favoriten_url(username):
     return f"{base_url}/files/{user}/trink_us/favoriten_{username}.csv"
 # Titel
 st.title("Ihre Favoriten 🍹")
+
 # Sicherstellen, dass die Favoriten-Daten vorhanden sind
 if "fav_df" in st.session_state and not st.session_state.fav_df.empty:
     df = st.session_state.fav_df
@@ -42,17 +43,22 @@ if "fav_df" in st.session_state and not st.session_state.fav_df.empty:
         filtered_df = df[["Suchbegriff"]].dropna(subset=["Suchbegriff"])
         filtered_df = filtered_df[filtered_df["Suchbegriff"].str.strip() != ""]
 
-        # Schritt 2: Hilfsspalte für Duplikaterkennung (kleingeschrieben)
+        # Schritt 2: Hilfsspalte mit kleingeschriebener Version zur Duplikaterkennung
         filtered_df["suchbegriff_lower"] = filtered_df["Suchbegriff"].str.lower().str.strip()
 
-        # Schritt 3: Duplikate anhand der Kleinschreibweise entfernen (erstes Vorkommen bleibt)
-        unique_df = filtered_df.drop_duplicates(subset="suchbegriff_lower").drop(columns="suchbegriff_lower")
+        # Schritt 3: Gruppieren nach kleingeschriebener Form, und bevorzugt "richtige" Schreibweise behalten
+        # Wir nehmen pro Gruppe den Suchbegriff mit Großbuchstaben (der zuerst vorkommt)
+        grouped_df = (
+            filtered_df.sort_values("Suchbegriff", ascending=False)
+            .drop_duplicates(subset="suchbegriff_lower")
+            .drop(columns="suchbegriff_lower")
+        )
 
-        # Schritt 4: Sortieren und Anzeigen
-        unique_df = unique_df.sort_values("Suchbegriff").reset_index(drop=True)
+        # Schritt 4: Sortieren & Anzeigen
+        grouped_df = grouped_df.sort_values("Suchbegriff").reset_index(drop=True)
 
-        st.subheader("Einzigartige Suchbegriffe (Groß-/Kleinschreibung ignoriert)")
-        st.dataframe(unique_df, use_container_width=True)
+        st.subheader("Einzigartige Suchbegriffe (nur korrekt geschriebene)")
+        st.dataframe(grouped_df, use_container_width=True)
     else:
         st.warning("Die Spalte 'Suchbegriff' wurde nicht gefunden.")
 else:
