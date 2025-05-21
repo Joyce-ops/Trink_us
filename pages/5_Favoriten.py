@@ -4,11 +4,7 @@ LoginManager().go_to_login('favoriten.py')
 # ====== End Login Block ======
 
 import streamlit as st
-import requests
-import csv
-import io
 import pandas as pd
-from requests.auth import HTTPBasicAuth
 from utils.theme import apply_theme
 
 # Theme
@@ -22,38 +18,43 @@ if not username:
     st.error("Bitte zuerst einloggen!")
     st.stop()
 
-# WebDAV-Zugang
-base_url = st.secrets["webdav"]["base_url"]
-user = st.secrets["webdav"]["username"]
-password = st.secrets["webdav"]["password"]
-
-# Pfad dynamisch
-def get_favoriten_url(username):
-    return f"{base_url}/files/{user}/trink_us/favoriten_{username}.csv"
 # Titel
 st.title("Ihre Favoriten 🍹")
-# ------------------------------
-# Duplikate entfernen nach strDrink (kann angepasst werden)
-# ------------------------------
-
 
 # Sicherstellen, dass die Favoriten-Daten vorhanden sind
 if "fav_df" in st.session_state and not st.session_state.fav_df.empty:
-    df = st.session_state.fav_df
+    df = st.session_state.fav_df.copy()
 
-    # Nur die Spalte mit Suchbegriffen (z. B. Drink-Namen)
     if "Suchbegriff" in df.columns:
+        # Filter und Duplikate entfernen
         suchbegriffe_df = (
             df[["Suchbegriff"]]
-            .dropna(subset=["Suchbegriff"])  # Entfernt NaN-Werte
-            .query("Suchbegriff != 'none'")      # Entfernt leere Strings
+            .dropna(subset=["Suchbegriff"])
+            .query("Suchbegriff != 'none' and Suchbegriff != ''")
             .drop_duplicates()
             .sort_values("Suchbegriff")
             .reset_index(drop=True)
         )
 
-        st.subheader("Einzigartige Suchbegriffe")
+        st.subheader("Suchbegriffe")
         st.dataframe(suchbegriffe_df, use_container_width=True)
+
+        # Auswahl der zu löschenden Suchbegriffe
+        to_delete = st.multiselect(
+            "Suchbegriffe zum Löschen auswählen:",
+            options=suchbegriffe_df["Suchbegriff"].tolist()
+        )
+
+        if st.button("Ausgewählte Suchbegriffe löschen"):
+            if to_delete:
+                # Filtere alle Zeilen aus fav_df raus, deren Suchbegriff in to_delete ist
+                new_df = df[~df["Suchbegriff"].isin(to_delete)].reset_index(drop=True)
+                st.session_state.fav_df = new_df  # Update im session_state
+
+                st.success(f"{len(to_delete)} Suchbegriff(e) wurden gelöscht.")
+                st.experimental_rerun()  # Seite neu laden, damit Tabelle aktualisiert wird
+            else:
+                st.warning("Bitte mindestens einen Suchbegriff zum Löschen auswählen.")
     else:
         st.warning("Die Spalte 'Suchbegriff' wurde nicht gefunden.")
 else:
