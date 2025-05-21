@@ -32,47 +32,48 @@ def get_favoriten_url(username):
     return f"{base_url}/files/{user}/trink_us/favoriten_{username}.csv"
 
 # Laden
-def favoriten_laden(username):
-    try:
-        response = requests.get(get_favoriten_url(username), auth=HTTPBasicAuth(user, password))
-        if response.status_code == 200 and response.text.strip():
-            return list(csv.DictReader(io.StringIO(response.text)))
-    except Exception as e:
-        st.error(f"Fehler beim Laden: {e}")
-    return []
+# def favoriten_laden(username):
+#     try:
+#         response = requests.get(get_favoriten_url(username), auth=HTTPBasicAuth(user, password))
+#         if response.status_code == 200 and response.text.strip():
+#             return list(csv.DictReader(io.StringIO(response.text)))
+#     except Exception as e:
+#         st.error(f"Fehler beim Laden: {e}")
+#     return []
 
 st.title("Ihre Favoriten 🍹")
 
-favoriten = favoriten_laden(username)
-if not favoriten:
-    st.info("Noch keine Favoriten gespeichert.")
-    st.stop()
+# favoriten = favoriten_laden(username)
+# if not favoriten:
+#     st.info("Noch keine Favoriten gespeichert.")
+#     st.stop()
 
 # Tabelle
-df = pd.DataFrame(favoriten)
-df = df.sort_values('strDrink')
-st.dataframe(df[["strDrink", "strInstructions"]])
+st.dataframe(st.session_state.fav_df, use_container_width=True)
+# df = st.session_state.fav_df
+# df = df.sort_values('strDrink')
+# st.dataframe(df[["strDrink", "strInstructions"]])
 
-# Kartenansicht
-st.markdown("---")
-st.subheader("Favoriten als Karten")
-cols = st.columns(3)
-for idx, rezept in enumerate(favoriten):
-    col = cols[idx % 3]
-    with col:
-        if rezept.get("strDrinkThumb"):
-            st.image(rezept["strDrinkThumb"], width=120)
-        st.markdown(f"*{rezept.get('strDrink', 'Unbekannter Drink')}*")
-        if st.button("Rezept anzeigen", key=f"details_{idx}"):
-            zutaten = []
-            for i in range(1, 16):
-                zutat = rezept.get(f"strIngredient{i}")
-                menge = rezept.get(f"strMeasure{i}")
-                if zutat and zutat.strip():
-                    zutaten.append(f"- {menge or ''} {zutat}".strip())
-            if zutaten:
-                st.markdown("*Zutaten:*")
-                for z in zutaten:
-                    st.markdown(z)
-            st.markdown("*Zubereitung:*")
-            st.write(rezept.get("strInstructions", "Keine Anleitung vorhanden."))
+# # Kartenansicht
+# st.markdown("---")
+# st.subheader("Favoriten als Karten")
+# cols = st.columns(3)
+# for idx, rezept in enumerate(favoriten):
+#     col = cols[idx % 3]
+#     with col:
+#         if rezept.get("strDrinkThumb"):
+#             st.image(rezept["strDrinkThumb"], width=120)
+#         st.markdown(f"*{rezept.get('strDrink', 'Unbekannter Drink')}*")
+#         if st.button("Rezept anzeigen", key=f"details_{idx}"):
+#             zutaten = []
+#             for i in range(1, 16):
+#                 zutat = rezept.get(f"strIngredient{i}")
+#                 menge = rezept.get(f"strMeasure{i}")
+#                 if zutat and zutat.strip():
+#                     zutaten.append(f"- {menge or ''} {zutat}".strip())
+#             if zutaten:
+#                 st.markdown("*Zutaten:*")
+#                 for z in zutaten:
+#                     st.markdown(z)
+#             st.markdown("*Zubereitung:*")
+#             st.write(rezept.get("strInstructions", "Keine Anleitung vorhanden."))
