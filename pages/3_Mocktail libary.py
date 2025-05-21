@@ -9,8 +9,8 @@ import io
 import csv
 from requests.auth import HTTPBasicAuth
 from utils.theme import apply_theme
-
-
+from utils.data_manager import DataManager
+from utils.helpers import ch_now
 
 st.title("🍹 Mocktail Library")
 
@@ -18,13 +18,13 @@ st.title("🍹 Mocktail Library")
 base_url = st.secrets["webdav"]["base_url"]
 user = st.secrets["webdav"]["username"]
 app_passwort = st.secrets["webdav"]["password"]
-remote_favoriten_url = f"{base_url}/files/{user}/data.csv"
+remote_favoriten_url = f"{base_url}/files/{user}/mocktail_favoriten.csv"
 
 # Favoriten aus Switch Drive laden (CSV)
 def favoriten_laden():
     try:
         response = requests.get(remote_favoriten_url, auth=HTTPBasicAuth(user, app_passwort))
-        if response.status_code == 200:
+        if response.status_code == 200 and response.text.strip():
             csvfile = io.StringIO(response.text)
             reader = csv.DictReader(csvfile)
             return list(reader)
@@ -118,8 +118,10 @@ st.markdown(
 )
 
 # Suchleiste für Mocktails
-st.markdown('<label class="search-label">🔍 Suche nach einem Mocktail:</label>', unsafe_allow_html=True)
 suchbegriff = st.text_input("", placeholder="Gib einen Mocktailnamen ein...")
+
+# Username aus Session holen
+username = st.session_state.get("username", user)
 
 # Mocktails suchen und anzeigen
 mocktails = suche_mocktails(suchbegriff)
@@ -145,25 +147,32 @@ if mocktails:
                                 st.markdown(f"<p class='recipe-text'>- {measure or ''} {ingredient}</p>", unsafe_allow_html=True)
                         st.markdown("<p class='recipe-text'><b>Zubereitung:</b></p>", unsafe_allow_html=True)
                         st.markdown(f"<p class='recipe-text'>{details.get('strInstructions', 'Keine Zubereitungsanweisungen verfügbar.')}</p>", unsafe_allow_html=True)
-            if st.button("Zu Favoriten hinzufügen", key=f"add_fav_{mocktail['idDrink']}"):
-                if not any(fav.get("idDrink") == mocktail["idDrink"] for fav in favoriten):
-                    # Hole alle Details für die Speicherung
+            # ⭐ Favoriten-Button
+            if st.button(f"⭐ Zu Favoriten hinzufügen", key=f"fav_{mocktail['idDrink']}"):
+                # Lokale Favoritenverwaltung (DataFrame oder Liste)
+                record = {
+                    "timestamp": ch_now(),
+                    "Suchbegriff": mocktail['strDrink']
+                }
+                DataManager().append_record('fav_df', record)
+                # WebDAV-Favoriten
+                if not any(f.get("idDrink") == mocktail["idDrink"] for f in favoriten):
                     details = mocktail_details(mocktail["idDrink"])
                     if details:
                         fav_dict = {
                             "idDrink": details.get("idDrink"),
                             "strDrink": details.get("strDrink"),
                             "strDrinkThumb": details.get("strDrinkThumb"),
-                            "strInstructions": details.get("strInstructions"),
+                            "strInstructions": details.get("strInstructions") or "",
                         }
                         for i in range(1, 16):
-                            fav_dict[f"strIngredient{i}"] = details.get(f"strIngredient{i}")
-                            fav_dict[f"strMeasure{i}"] = details.get(f"strMeasure{i}")
+                            fav_dict[f"strIngredient{i}"] = details.get(f"strIngredient{i}") or ""
+                            fav_dict[f"strMeasure{i}"] = details.get(f"strMeasure{i}") or ""
                         favoriten.append(fav_dict)
                         favoriten_speichern(favoriten)
-                        st.success(f"'{details['strDrink']}' wurde zu den Favoriten hinzugefügt!")
+                        st.success(f"'{details['strDrink']}' wurde gespeichert!")
                 else:
-                    st.warning(f"'{mocktail['strDrink']}' ist bereits in den Favoriten.")
+                    st.warning(f"'{mocktail['strDrink']}' ist bereits gespeichert.")
         st.markdown("---")
 else:
     st.warning("Keine Mocktails gefunden. Bitte versuche es mit einem anderen Suchbegriff.")
