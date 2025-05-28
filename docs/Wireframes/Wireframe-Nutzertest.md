@@ -35,3 +35,15 @@ Eine weitere Idee von der Person war, dass es eine Option für das Speichern von
 **Neue Probleme?**
 Nach dem Nutzertest haben sich keine neuen Probleme ergeben.
 
+
+# **Rückmeldung unserer Persona - App Nutzertest**
+
+## **Was ist gut?**
+- Die Getränke Auswahl ist sehr gross, dazu auch noch die verschiedenen Geschmacksrichtungen macht die Auswahl noch vielfältiger.
+- Die Wetter-Drink-Funktion ist lustig, spannend und etwas Neues.
+- Die Drink-Counter-Funktion gefällt mir sehr, da man das auch gut in den Ferien anwenden kann oder wenn man am Wochenende mit Freunden im Ausgang ist, um zu sehen, wer wie viel trinkt oder auch am nächsten Tag einen Überblick zu haben.
+- Ich finde es grossartig, dass man Favoriten speichern kann und diese beim nächsten Mal wieder abrufen kann. 
+
+## **Verbesserungsvorschläge**
+- Vermerk "Drücke hier" zum Öffnen der Menu leiste könnte man noch ergänzen, um das App noch nutzerfreundlicher zu gestalten.
+- Man könnte allenfalls die Schrift edler gestalten oder zum Beispiel die Emojis weglassen.
