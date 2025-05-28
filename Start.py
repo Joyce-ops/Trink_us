@@ -1,10 +1,9 @@
 # ====== Start Init Block ======
-# This needs to copied on top of the entry point of the app (Start.py)
-
 import pandas as pd
 from utils.data_manager import DataManager
 from utils.login_manager import LoginManager
 import streamlit as st
+from utils.theme import apply_theme
 
 # initialize the data manager
 data_manager = DataManager(fs_protocol='webdav', fs_root_folder="Trink_us")  # switch drive 
@@ -22,93 +21,16 @@ data_manager.load_user_data(
     )
 
 # ====== End Init Block ======
+
 # Theme-Funktion: Hell/Dunkel-Modus
-# ==============================
-
-def apply_theme():
-    dark_mode = st.session_state.get("dark_mode", False)
-    if dark_mode:
-        image_url = "https://lamanne-paris.fr/wp-content/uploads/2021/07/astuces-ruiner-2048x1234.jpeg"
-        overlay_color = "rgba(0, 0, 0, 0.7)"
-        text_color = "#ffffff"
-        box_bg_color = "rgba(0, 0, 0, 0.6)"
-    else:
-        image_url = "https://lamanne-paris.fr/wp-content/uploads/2021/07/astuces-ruiner-2048x1234.jpeg"
-        overlay_color = "rgba(255, 255, 255, 0.5)"
-        text_color = "#000000"
-        box_bg_color = "rgba(255, 255, 255, 0.85)"
-
-    st.markdown(
-        f"""
-        <style>
-        .stApp {{
-            background: linear-gradient({overlay_color}, {overlay_color}),
-                        url("{image_url}");
-            background-size: cover;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-            background-position: center;
-        }}
-
-        .stApp > div:first-child {{
-            background-color: {box_bg_color};
-            padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
-        }}
-
-        /* ALLE Textelemente robust ansprechen */
-        [data-testid="stMarkdownContainer"],
-        [data-testid="stHeader"],
-        [data-testid="stText"],
-        [data-testid="stTitle"],
-        [data-testid="stSubheader"],
-        [data-testid="stCaption"],
-        [data-testid="stExpander"],
-        [data-testid="stForm"],
-        .stMarkdown, .stText, .stTitle, .stSubheader {{
-            color: {text_color} !important;
-            font-weight: 700 !important;   /* jetzt richtig fett */
-            font-size: 1.08em !important;  /* etwas größer */
-        }}
-
-        /* Info-Boxen */
-        div[data-testid="stAlert"] {{
-            background-color: rgba(255, 0, 0, 0.2) !important;
-            border-left: none !important;
-            color: {text_color} !important;
-        }}
-
-        /* Eingabefelder */
-        input, textarea, select {{
-            color: {text_color} !important;
-        }}
-
-        /* Tabellen */
-        .stDataFrame, .stTable {{
-            color: {text_color} !important;
-        }}
-
-        /* Button-Stil */
-        .stButton > button {{
-            color: {text_color} !important;
-        }}
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-# Initialisierung für Darkmode
 if "dark_mode" not in st.session_state:
     st.session_state["dark_mode"] = False
 
-# Toggle für Dunkelmodus in der Sidebar
 st.sidebar.markdown("## Anzeige")
 st.session_state["dark_mode"] = st.sidebar.toggle("🌙 Dunkelmodus", value=st.session_state["dark_mode"])
 
-# Theme anwenden
+# Theme anwenden (NUR aus theme.py!)
 apply_theme()
-
 
 # ==============================
 # Startseite Inhalt
@@ -124,7 +46,7 @@ st.title('Cocktail Rezepte')
 # Begrüßung des Benutzers
 name = st.session_state.get('name', 'Gast')
 st.markdown(f"✨ Hallo {name}! ✨")
-st.markdown("Willkommen bei Trink us. Bei uns findest du zahlreiche Cocktails, die deinen Abend unvergesslich und geschmacksvoll machen. Für jeden Cocktail-Enthusiast ist etwas dabei!!")
+st.markdown("Willkommen bei Trink us. Bei uns findest du zahlreiche Cocktails, die deinen Abend unvergesslich und geschmacksvoll machen. Für jeden Cocktail-Enthusiast ist etwas dabei!! 🍹")
 
 # Hinweis zum Alkoholkonsum
 st.info("""
