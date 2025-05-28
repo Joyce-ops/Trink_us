@@ -9,11 +9,19 @@ def apply_theme():
         overlay_color = "rgba(0, 0, 0, 0.7)"
         text_color = "#ffffff"
         box_bg_color = "rgba(0, 0, 0, 0.6)"
+        button_bg = "#222831"
+        button_text = "#ffffff"
+        button_hover_bg = "#8ecae6"
+        button_hover_text = "#222"
     else:
         image_url = "https://lamanne-paris.fr/wp-content/uploads/2021/07/astuces-ruiner-2048x1234.jpeg"
         overlay_color = "rgba(255, 255, 255, 0.5)"
         text_color = "#000000"
         box_bg_color = "rgba(255, 255, 255, 0.85)"
+        button_bg = "#e0f7fa"
+        button_text = "#222"
+        button_hover_bg = "#8ecae6"
+        button_hover_text = "#222"
 
     st.markdown(
         f"""
@@ -60,8 +68,17 @@ def apply_theme():
             color: {text_color} !important;
         }}
 
+        /* BUTTONS */
         .stButton > button {{
-            color: {text_color} !important;
+            color: {button_text} !important;
+            background-color: {button_bg} !important;
+            border: 1.5px solid #8ecae6 !important;
+            font-weight: 700 !important;
+            transition: 0.2s;
+        }}
+        .stButton > button:hover {{
+            background-color: {button_hover_bg} !important;
+            color: {button_hover_text} !important;
         }}
         </style>
         """,
