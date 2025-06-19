@@ -35,7 +35,6 @@ def apply_theme():
             background-position: center;
         }}
 
-
         [data-testid="stMarkdownContainer"],
         [data-testid="stHeader"],
         [data-testid="stText"],
