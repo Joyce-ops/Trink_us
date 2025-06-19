@@ -58,3 +58,4 @@ Genieße verantwortungsvoll und altersgerecht. 🍸✨
 
 # Entwicklerhinweis
 st.write("Diese App wurde von Carmen Hurschler, Mcqulat Miller und Joyce Baumann im Rahmen des Moduls 'BMLD Informatik 2' an der ZHAW entwickelt.")
+

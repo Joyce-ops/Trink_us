@@ -35,12 +35,6 @@ def apply_theme():
             background-position: center;
         }}
 
-        .stApp > div:first-child {{
-            background-color: {box_bg_color};
-            padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
-        }}
 
         [data-testid="stMarkdownContainer"],
         [data-testid="stHeader"],
